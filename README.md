@@ -20,21 +20,26 @@ O sistema usa Laravel 12, autenticação Breeze e frontend com Vite, Tailwind CS
 
 ## Features
 
-- Autenticação de usuários com login, registro e recuperação de senha.
-- Dashboard protegido por middleware de autenticação.
-- Área de perfil do usuário para edição de dados e exclusão de conta.
-- Rotas separadas por função: cliente, gerente e administrador.
-- Frontend baseado em Blade + Tailwind + Alpine.js.
+- ✅ **Autenticação completa**: Login, registro e recuperação de senha com Laravel Breeze
+- ✅ **Sistema de Roles**: Três níveis de acesso (Cliente, Gerente, Administrador)
+- ✅ **Dashboards personalizados**: Interfaces diferentes para cada tipo de usuário
+  - **Dashboard Cliente**: Landing page com apresentação da barbearia, cardápio de serviços, equipe profissional e depoimentos
+  - **Dashboard Gerente**: Estrutura preparada para gerenciamento operacional
+  - **Dashboard Administrador**: Estrutura preparada para controle do sistema
+- ✅ **Middleware de proteção**: Controle de acesso por role com `CheckRole` e `CheckAdmin`
+- ✅ **Tema escuro**: Suporte nativo a dark mode com persistência local
+- ✅ **Área de perfil**: Edição de dados pessoais e exclusão de conta
+- ✅ **Design responsivo**: Interface mobile-first com Tailwind CSS
+- ✅ **Frontend moderno**: Blade + Vite + Tailwind CSS + Alpine.js
 
 ## Technologies
 
-- PHP 8.2
-- Laravel 12
-- Laravel Breeze
-- Vite
-- Tailwind CSS
-- Alpine.js
-- MySQL / SQLite
+- **Backend**: PHP 8.2, Laravel 12, Laravel Breeze
+- **Frontend**: Vite, Tailwind CSS, Alpine.js, Blade
+- **Database**: MySQL / SQLite
+- **Styling**: Tailwind CSS (Dark Mode compatível)
+- **Icons**: Tabler Icons
+- **Fonts**: Google Fonts (Anton, IBM Plex Mono, Work Sans)
 
 ## Requirements
 
@@ -85,6 +90,100 @@ Para rodar em modo de desenvolvimento com recarga de assets do Vite:
 
 ```bash
 npm run dev
+```
+
+Em Recursos do Dashboard Cliente
+
+O dashboard do cliente (Alameda Barbearia) inclui:
+
+- 🏢 **Apresentação da barbearia** - Branding profissional desde 2016
+- 👨‍💼 **Equipe profissional** - Perfis dos barbeiros com especialidades (navalha, degradê, barba, platinado)
+- 💇 **Cardápio de serviços** - 8 serviços com preços (R$ 35 a R$ 120)
+- 📝 **Depoimentos de clientes** - Seção de avaliações e comentários
+- 🌙 **Tema escuro** - Suporte total com cores customizadas (tons brass/ouro)
+- 📱 **Design responsivo** - Navegação mobile-friendly com menu hamburguês
+
+## Estrutura do Projeto
+
+```
+app/
+├── Http/
+│   ├── Controllers/
+│   │   ├── DashboardController.php    (Roteamento por role)
+│   │   ├── ProfileController.php       (Gerenciamento de perfil)
+│   │   └── Auth/                       (Controllers de autenticação)
+│   └── Middleware/
+│       ├── CheckRole.php               (Validação de role)
+│       └── CheckAdmin.php              (Validação admin)
+├── Models/
+│   └── User.php                        (Modelo com role field)
+└── Providers/
+
+resources/
+├── views/
+│   ├── dashboards/
+│   │   ├── client.blade.php            (Dashboard cliente)
+│   │   ├── manager.blade.php           (Dashboard gerente)
+│   │   └── admin.blade.php             (Dashboard admin)
+│   ├── auth/                           (Views de autenticação)
+│   ├── profile/                        (Views de perfil)
+│   └── layouts/                        (Layouts principais)
+└── css/
+    └── app.css                         (Estilos globais)
+
+routes/
+├── web.php                             (Rotas principais)
+└── auth.php                            (Rotas de autenticação)
+
+database/
+├── migrations/                         (Schema do banco)
+└── seeders/                            (Seeds iniciais)
+```
+
+## Notes
+
+- Se quiser usar o script de setup automático, execute `composer setup`
+- Caso use SQLite, atualize `DB_CONNECTION=sqlite` e defina `DB_DATABASE=` com o caminho para `database/database.sqlite`
+- O tema escuro é salvo nas preferências do navegador (localStorage)
+- Para adicionar novos serviços ou equipe, edite diretamente o arquivo `resources/views/dashboards/client.blade.php`
+```
+
+## Estrutura de Roles e Dashboards
+
+O sistema implementa um controle de acesso baseado em três roles:
+
+| Role | Descrição | Rota |
+|------|-----------|------|
+| **client** | Cliente da barbearia | `/dashboard/client` |
+| **manager** | Gerente de operações | `/dashboard/manager` |
+| **admin** | Administrador do sistema | `/dashboard/admin` |
+
+### Como usar
+
+1. **Registre um novo usuário** - Todos os usuários novos são criados com role `client` por padrão
+2. **Para atribuir outros roles** - Use o banco de dados diretamente ou implemente um painel admin:
+
+```sql
+UPDATE users SET role = 'manager' WHERE id = 2;
+UPDATE users SET role = 'admin' WHERE id = 3;
+```
+
+3. **Login** - Após fazer login, você será redirecionado automaticamente para o dashboard correto baseado no seu role
+
+### Middleware de Proteção
+
+As rotas são protegidas por middleware customizado:
+
+- `auth` - Requer estar autenticado
+- `role:client` - Requer role específico (substituir com o role desejado)
+- `admin` - Requer ser administrador
+
+Exemplo de uso em rotas:
+
+```php
+Route::middleware(['auth', 'role:manager'])->group(function () {
+    // Rotas exclusivas para gerentes
+});
 ```
 
 ## Notes
