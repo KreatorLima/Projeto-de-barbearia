@@ -20,9 +20,10 @@ export default {
         extend: {
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
+                playfair: ['"Playfair Display"', 'serif'],
             },
         },
     },
-
+    
     plugins: [forms],
 };
