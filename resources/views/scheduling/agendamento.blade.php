@@ -71,7 +71,6 @@
 </head>
 <body class="bg-surface dark:bg-surface-dark text-ink dark:text-ink-dark font-sans leading-relaxed antialiased transition-colors duration-200">
 
-<!-- ================= NAV ================= -->
 <header class="sticky top-0 z-50 border-b border-line dark:border-line-dark bg-surface/90 dark:bg-surface-dark/90 backdrop-blur">
   <nav class="max-w-[1120px] mx-auto px-8 h-[76px] flex items-center justify-between">
     <a href="index.html" class="flex items-center gap-2.5 font-display text-xl tracking-wide hover:opacity-80 transition-opacity">
@@ -105,7 +104,6 @@
   </div>
 </header>
 
-<!-- ================= HERO ================= -->
 <section class="border-b border-line dark:border-line-dark py-14">
   <div class="max-w-[1120px] mx-auto px-8">
     <span class="hero-anim block font-mono text-xs tracking-[0.14em] uppercase text-brass dark:text-brass-dark" style="animation-delay:0ms">Agendamento online</span>
@@ -116,14 +114,15 @@
   </div>
 </section>
 
-<!-- ================= FORM + RESUMO ================= -->
 <section class="py-16">
   <div class="max-w-[1120px] mx-auto px-8 grid lg:grid-cols-[1fr_360px] gap-12 items-start">
 
-    <!-- ============ COLUNA DO FORMULÁRIO ============ -->
-    <form id="bookingForm" class="space-y-14">
+    <form id="bookingForm" action="{{ route('agendamentos.store') }}" method="POST" class="space-y-14">
+      @csrf
+      
+      <input type="hidden" name="date" id="input_selected_date">
+      <input type="hidden" name="time" id="input_selected_time">
 
-      <!-- 01 · SERVIÇO -->
       <div data-reveal>
         <div class="flex items-baseline gap-3 mb-6">
           <span class="font-mono text-[13px] text-brass dark:text-brass-dark">01</span>
@@ -246,7 +245,6 @@
         </div>
       </div>
 
-      <!-- 02 · PROFISSIONAL -->
       <div data-reveal>
         <div class="flex items-baseline gap-3 mb-6">
           <span class="font-mono text-[13px] text-brass dark:text-brass-dark">02</span>
@@ -298,7 +296,6 @@
         </div>
       </div>
 
-      <!-- 03 · DATA E HORÁRIO -->
       <div data-reveal>
         <div class="flex items-baseline gap-3 mb-2">
           <span class="font-mono text-[13px] text-brass dark:text-brass-dark">03</span>
@@ -306,71 +303,90 @@
         </div>
         <p class="text-[13px] text-ink-dim dark:text-ink-dim-dark mb-5">Toque em um horário livre na tabela. Células em cinza já estão ocupadas.</p>
 
-        <div class="border border-line dark:border-line-dark rounded-xl p-4 overflow-x-auto" id="slotsTable">
-<table class="w-full border-collapse">
-  <thead>
-    <tr>
-      <th class="p-1 pb-3"></th>
-      <th class="p-1 pb-3 text-center font-mono text-[11px] font-medium text-ink-dim dark:text-ink-dim-dark whitespace-nowrap">Qua<span class="block text-brass dark:text-brass-dark text-[13px] font-semibold">01</span></th><th class="p-1 pb-3 text-center font-mono text-[11px] font-medium text-ink-dim dark:text-ink-dim-dark whitespace-nowrap">Qui<span class="block text-brass dark:text-brass-dark text-[13px] font-semibold">02</span></th><th class="p-1 pb-3 text-center font-mono text-[11px] font-medium text-ink-dim dark:text-ink-dim-dark whitespace-nowrap">Sex<span class="block text-brass dark:text-brass-dark text-[13px] font-semibold">03</span></th><th class="p-1 pb-3 text-center font-mono text-[11px] font-medium text-ink-dim dark:text-ink-dim-dark whitespace-nowrap">Sáb<span class="block text-brass dark:text-brass-dark text-[13px] font-semibold">04</span></th><th class="p-1 pb-3 text-center font-mono text-[11px] font-medium text-ink-dim dark:text-ink-dim-dark whitespace-nowrap">Ter<span class="block text-brass dark:text-brass-dark text-[13px] font-semibold">07</span></th><th class="p-1 pb-3 text-center font-mono text-[11px] font-medium text-ink-dim dark:text-ink-dim-dark whitespace-nowrap">Qua<span class="block text-brass dark:text-brass-dark text-[13px] font-semibold">08</span></th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td class="p-1 pr-3 text-right font-mono text-[11px] text-ink-dim dark:text-ink-dim-dark whitespace-nowrap">08:00</td>
-        <td class="p-1"><span class="block text-center text-[11px] text-ink-dim/40 dark:text-ink-dim-dark/30 py-2.5">—</span></td><td class="p-1"><span class="block text-center text-[11px] text-ink-dim/40 dark:text-ink-dim-dark/30 py-2.5">—</span></td><td class="p-1"><span class="block text-center text-[11px] text-ink-dim/40 dark:text-ink-dim-dark/30 py-2.5">—</span></td><td class="p-1"><button type="button" data-slot data-day="Sáb, 04/07" data-time="08:00" class="w-full text-center text-[12px] font-mono text-ink-dim dark:text-ink-dim-dark border border-line dark:border-line-dark rounded py-2.5 transition-all duration-150 hover:border-brass-dim hover:text-brass dark:hover:text-brass-dark hover:-translate-y-0.5 active:translate-y-0">08:00</button></td><td class="p-1"><span class="block text-center text-[11px] text-ink-dim/40 dark:text-ink-dim-dark/30 py-2.5">—</span></td><td class="p-1"><span class="block text-center text-[11px] text-ink-dim/40 dark:text-ink-dim-dark/30 py-2.5">—</span></td>
-      </tr>
-      <tr>
-        <td class="p-1 pr-3 text-right font-mono text-[11px] text-ink-dim dark:text-ink-dim-dark whitespace-nowrap">09:00</td>
-        <td class="p-1"><button type="button" data-slot data-day="Qua, 01/07" data-time="09:00" class="w-full text-center text-[12px] font-mono text-ink-dim dark:text-ink-dim-dark border border-line dark:border-line-dark rounded py-2.5 transition-all duration-150 hover:border-brass-dim hover:text-brass dark:hover:text-brass-dark hover:-translate-y-0.5 active:translate-y-0">09:00</button></td><td class="p-1"><button type="button" data-slot data-day="Qui, 02/07" data-time="09:00" class="w-full text-center text-[12px] font-mono text-ink-dim dark:text-ink-dim-dark border border-line dark:border-line-dark rounded py-2.5 transition-all duration-150 hover:border-brass-dim hover:text-brass dark:hover:text-brass-dark hover:-translate-y-0.5 active:translate-y-0">09:00</button></td><td class="p-1"><span class="block text-center text-[11px] font-mono text-ink-dim dark:text-ink-dim-dark bg-surface-2 dark:bg-surface-2-dark rounded py-2.5 cursor-not-allowed line-through decoration-line dark:decoration-line-dark">Ocupado</span></td><td class="p-1"><button type="button" data-slot data-day="Sáb, 04/07" data-time="09:00" class="w-full text-center text-[12px] font-mono text-ink-dim dark:text-ink-dim-dark border border-line dark:border-line-dark rounded py-2.5 transition-all duration-150 hover:border-brass-dim hover:text-brass dark:hover:text-brass-dark hover:-translate-y-0.5 active:translate-y-0">09:00</button></td><td class="p-1"><button type="button" data-slot data-day="Ter, 07/07" data-time="09:00" class="w-full text-center text-[12px] font-mono text-ink-dim dark:text-ink-dim-dark border border-line dark:border-line-dark rounded py-2.5 transition-all duration-150 hover:border-brass-dim hover:text-brass dark:hover:text-brass-dark hover:-translate-y-0.5 active:translate-y-0">09:00</button></td><td class="p-1"><button type="button" data-slot data-day="Qua, 08/07" data-time="09:00" class="w-full text-center text-[12px] font-mono text-ink-dim dark:text-ink-dim-dark border border-line dark:border-line-dark rounded py-2.5 transition-all duration-150 hover:border-brass-dim hover:text-brass dark:hover:text-brass-dark hover:-translate-y-0.5 active:translate-y-0">09:00</button></td>
-      </tr>
-      <tr>
-        <td class="p-1 pr-3 text-right font-mono text-[11px] text-ink-dim dark:text-ink-dim-dark whitespace-nowrap">10:00</td>
-        <td class="p-1"><span class="block text-center text-[11px] font-mono text-ink-dim dark:text-ink-dim-dark bg-surface-2 dark:bg-surface-2-dark rounded py-2.5 cursor-not-allowed line-through decoration-line dark:decoration-line-dark">Ocupado</span></td><td class="p-1"><button type="button" data-slot data-day="Qui, 02/07" data-time="10:00" class="w-full text-center text-[12px] font-mono text-ink-dim dark:text-ink-dim-dark border border-line dark:border-line-dark rounded py-2.5 transition-all duration-150 hover:border-brass-dim hover:text-brass dark:hover:text-brass-dark hover:-translate-y-0.5 active:translate-y-0">10:00</button></td><td class="p-1"><button type="button" data-slot data-day="Sex, 03/07" data-time="10:00" class="w-full text-center text-[12px] font-mono text-ink-dim dark:text-ink-dim-dark border border-line dark:border-line-dark rounded py-2.5 transition-all duration-150 hover:border-brass-dim hover:text-brass dark:hover:text-brass-dark hover:-translate-y-0.5 active:translate-y-0">10:00</button></td><td class="p-1"><button type="button" data-slot data-day="Sáb, 04/07" data-time="10:00" class="w-full text-center text-[12px] font-mono text-ink-dim dark:text-ink-dim-dark border border-line dark:border-line-dark rounded py-2.5 transition-all duration-150 hover:border-brass-dim hover:text-brass dark:hover:text-brass-dark hover:-translate-y-0.5 active:translate-y-0">10:00</button></td><td class="p-1"><button type="button" data-slot data-day="Ter, 07/07" data-time="10:00" class="w-full text-center text-[12px] font-mono text-ink-dim dark:text-ink-dim-dark border border-line dark:border-line-dark rounded py-2.5 transition-all duration-150 hover:border-brass-dim hover:text-brass dark:hover:text-brass-dark hover:-translate-y-0.5 active:translate-y-0">10:00</button></td><td class="p-1"><button type="button" data-slot data-day="Qua, 08/07" data-time="10:00" class="w-full text-center text-[12px] font-mono text-ink-dim dark:text-ink-dim-dark border border-line dark:border-line-dark rounded py-2.5 transition-all duration-150 hover:border-brass-dim hover:text-brass dark:hover:text-brass-dark hover:-translate-y-0.5 active:translate-y-0">10:00</button></td>
-      </tr>
-      <tr>
-        <td class="p-1 pr-3 text-right font-mono text-[11px] text-ink-dim dark:text-ink-dim-dark whitespace-nowrap">11:00</td>
-        <td class="p-1"><button type="button" data-slot data-day="Qua, 01/07" data-time="11:00" class="w-full text-center text-[12px] font-mono text-ink-dim dark:text-ink-dim-dark border border-line dark:border-line-dark rounded py-2.5 transition-all duration-150 hover:border-brass-dim hover:text-brass dark:hover:text-brass-dark hover:-translate-y-0.5 active:translate-y-0">11:00</button></td><td class="p-1"><button type="button" data-slot data-day="Qui, 02/07" data-time="11:00" class="w-full text-center text-[12px] font-mono text-ink-dim dark:text-ink-dim-dark border border-line dark:border-line-dark rounded py-2.5 transition-all duration-150 hover:border-brass-dim hover:text-brass dark:hover:text-brass-dark hover:-translate-y-0.5 active:translate-y-0">11:00</button></td><td class="p-1"><button type="button" data-slot data-day="Sex, 03/07" data-time="11:00" class="w-full text-center text-[12px] font-mono text-ink-dim dark:text-ink-dim-dark border border-line dark:border-line-dark rounded py-2.5 transition-all duration-150 hover:border-brass-dim hover:text-brass dark:hover:text-brass-dark hover:-translate-y-0.5 active:translate-y-0">11:00</button></td><td class="p-1"><span class="block text-center text-[11px] font-mono text-ink-dim dark:text-ink-dim-dark bg-surface-2 dark:bg-surface-2-dark rounded py-2.5 cursor-not-allowed line-through decoration-line dark:decoration-line-dark">Ocupado</span></td><td class="p-1"><button type="button" data-slot data-day="Ter, 07/07" data-time="11:00" class="w-full text-center text-[12px] font-mono text-ink-dim dark:text-ink-dim-dark border border-line dark:border-line-dark rounded py-2.5 transition-all duration-150 hover:border-brass-dim hover:text-brass dark:hover:text-brass-dark hover:-translate-y-0.5 active:translate-y-0">11:00</button></td><td class="p-1"><button type="button" data-slot data-day="Qua, 08/07" data-time="11:00" class="w-full text-center text-[12px] font-mono text-ink-dim dark:text-ink-dim-dark border border-line dark:border-line-dark rounded py-2.5 transition-all duration-150 hover:border-brass-dim hover:text-brass dark:hover:text-brass-dark hover:-translate-y-0.5 active:translate-y-0">11:00</button></td>
-      </tr>
-      <tr>
-        <td class="p-1 pr-3 text-right font-mono text-[11px] text-ink-dim dark:text-ink-dim-dark whitespace-nowrap">12:00</td>
-        <td class="p-1"><button type="button" data-slot data-day="Qua, 01/07" data-time="12:00" class="w-full text-center text-[12px] font-mono text-ink-dim dark:text-ink-dim-dark border border-line dark:border-line-dark rounded py-2.5 transition-all duration-150 hover:border-brass-dim hover:text-brass dark:hover:text-brass-dark hover:-translate-y-0.5 active:translate-y-0">12:00</button></td><td class="p-1"><button type="button" data-slot data-day="Qui, 02/07" data-time="12:00" class="w-full text-center text-[12px] font-mono text-ink-dim dark:text-ink-dim-dark border border-line dark:border-line-dark rounded py-2.5 transition-all duration-150 hover:border-brass-dim hover:text-brass dark:hover:text-brass-dark hover:-translate-y-0.5 active:translate-y-0">12:00</button></td><td class="p-1"><button type="button" data-slot data-day="Sex, 03/07" data-time="12:00" class="w-full text-center text-[12px] font-mono text-ink-dim dark:text-ink-dim-dark border border-line dark:border-line-dark rounded py-2.5 transition-all duration-150 hover:border-brass-dim hover:text-brass dark:hover:text-brass-dark hover:-translate-y-0.5 active:translate-y-0">12:00</button></td><td class="p-1"><button type="button" data-slot data-day="Sáb, 04/07" data-time="12:00" class="w-full text-center text-[12px] font-mono text-ink-dim dark:text-ink-dim-dark border border-line dark:border-line-dark rounded py-2.5 transition-all duration-150 hover:border-brass-dim hover:text-brass dark:hover:text-brass-dark hover:-translate-y-0.5 active:translate-y-0">12:00</button></td><td class="p-1"><button type="button" data-slot data-day="Ter, 07/07" data-time="12:00" class="w-full text-center text-[12px] font-mono text-ink-dim dark:text-ink-dim-dark border border-line dark:border-line-dark rounded py-2.5 transition-all duration-150 hover:border-brass-dim hover:text-brass dark:hover:text-brass-dark hover:-translate-y-0.5 active:translate-y-0">12:00</button></td><td class="p-1"><button type="button" data-slot data-day="Qua, 08/07" data-time="12:00" class="w-full text-center text-[12px] font-mono text-ink-dim dark:text-ink-dim-dark border border-line dark:border-line-dark rounded py-2.5 transition-all duration-150 hover:border-brass-dim hover:text-brass dark:hover:text-brass-dark hover:-translate-y-0.5 active:translate-y-0">12:00</button></td>
-      </tr>
-      <tr>
-        <td class="p-1 pr-3 text-right font-mono text-[11px] text-ink-dim dark:text-ink-dim-dark whitespace-nowrap">13:00</td>
-        <td class="p-1"><button type="button" data-slot data-day="Qua, 01/07" data-time="13:00" class="w-full text-center text-[12px] font-mono text-ink-dim dark:text-ink-dim-dark border border-line dark:border-line-dark rounded py-2.5 transition-all duration-150 hover:border-brass-dim hover:text-brass dark:hover:text-brass-dark hover:-translate-y-0.5 active:translate-y-0">13:00</button></td><td class="p-1"><button type="button" data-slot data-day="Qui, 02/07" data-time="13:00" class="w-full text-center text-[12px] font-mono text-ink-dim dark:text-ink-dim-dark border border-line dark:border-line-dark rounded py-2.5 transition-all duration-150 hover:border-brass-dim hover:text-brass dark:hover:text-brass-dark hover:-translate-y-0.5 active:translate-y-0">13:00</button></td><td class="p-1"><button type="button" data-slot data-day="Sex, 03/07" data-time="13:00" class="w-full text-center text-[12px] font-mono text-ink-dim dark:text-ink-dim-dark border border-line dark:border-line-dark rounded py-2.5 transition-all duration-150 hover:border-brass-dim hover:text-brass dark:hover:text-brass-dark hover:-translate-y-0.5 active:translate-y-0">13:00</button></td><td class="p-1"><button type="button" data-slot data-day="Sáb, 04/07" data-time="13:00" class="w-full text-center text-[12px] font-mono text-ink-dim dark:text-ink-dim-dark border border-line dark:border-line-dark rounded py-2.5 transition-all duration-150 hover:border-brass-dim hover:text-brass dark:hover:text-brass-dark hover:-translate-y-0.5 active:translate-y-0">13:00</button></td><td class="p-1"><button type="button" data-slot data-day="Ter, 07/07" data-time="13:00" class="w-full text-center text-[12px] font-mono text-ink-dim dark:text-ink-dim-dark border border-line dark:border-line-dark rounded py-2.5 transition-all duration-150 hover:border-brass-dim hover:text-brass dark:hover:text-brass-dark hover:-translate-y-0.5 active:translate-y-0">13:00</button></td><td class="p-1"><button type="button" data-slot data-day="Qua, 08/07" data-time="13:00" class="w-full text-center text-[12px] font-mono text-ink-dim dark:text-ink-dim-dark border border-line dark:border-line-dark rounded py-2.5 transition-all duration-150 hover:border-brass-dim hover:text-brass dark:hover:text-brass-dark hover:-translate-y-0.5 active:translate-y-0">13:00</button></td>
-      </tr>
-      <tr>
-        <td class="p-1 pr-3 text-right font-mono text-[11px] text-ink-dim dark:text-ink-dim-dark whitespace-nowrap">14:00</td>
-        <td class="p-1"><button type="button" data-slot data-day="Qua, 01/07" data-time="14:00" class="w-full text-center text-[12px] font-mono text-ink-dim dark:text-ink-dim-dark border border-line dark:border-line-dark rounded py-2.5 transition-all duration-150 hover:border-brass-dim hover:text-brass dark:hover:text-brass-dark hover:-translate-y-0.5 active:translate-y-0">14:00</button></td><td class="p-1"><span class="block text-center text-[11px] font-mono text-ink-dim dark:text-ink-dim-dark bg-surface-2 dark:bg-surface-2-dark rounded py-2.5 cursor-not-allowed line-through decoration-line dark:decoration-line-dark">Ocupado</span></td><td class="p-1"><button type="button" data-slot data-day="Sex, 03/07" data-time="14:00" class="w-full text-center text-[12px] font-mono text-ink-dim dark:text-ink-dim-dark border border-line dark:border-line-dark rounded py-2.5 transition-all duration-150 hover:border-brass-dim hover:text-brass dark:hover:text-brass-dark hover:-translate-y-0.5 active:translate-y-0">14:00</button></td><td class="p-1"><button type="button" data-slot data-day="Sáb, 04/07" data-time="14:00" class="w-full text-center text-[12px] font-mono text-ink-dim dark:text-ink-dim-dark border border-line dark:border-line-dark rounded py-2.5 transition-all duration-150 hover:border-brass-dim hover:text-brass dark:hover:text-brass-dark hover:-translate-y-0.5 active:translate-y-0">14:00</button></td><td class="p-1"><button type="button" data-slot data-day="Ter, 07/07" data-time="14:00" class="w-full text-center text-[12px] font-mono text-ink-dim dark:text-ink-dim-dark border border-line dark:border-line-dark rounded py-2.5 transition-all duration-150 hover:border-brass-dim hover:text-brass dark:hover:text-brass-dark hover:-translate-y-0.5 active:translate-y-0">14:00</button></td><td class="p-1"><button type="button" data-slot data-day="Qua, 08/07" data-time="14:00" class="w-full text-center text-[12px] font-mono text-ink-dim dark:text-ink-dim-dark border border-line dark:border-line-dark rounded py-2.5 transition-all duration-150 hover:border-brass-dim hover:text-brass dark:hover:text-brass-dark hover:-translate-y-0.5 active:translate-y-0">14:00</button></td>
-      </tr>
-      <tr>
-        <td class="p-1 pr-3 text-right font-mono text-[11px] text-ink-dim dark:text-ink-dim-dark whitespace-nowrap">15:00</td>
-        <td class="p-1"><button type="button" data-slot data-day="Qua, 01/07" data-time="15:00" class="w-full text-center text-[12px] font-mono text-ink-dim dark:text-ink-dim-dark border border-line dark:border-line-dark rounded py-2.5 transition-all duration-150 hover:border-brass-dim hover:text-brass dark:hover:text-brass-dark hover:-translate-y-0.5 active:translate-y-0">15:00</button></td><td class="p-1"><button type="button" data-slot data-day="Qui, 02/07" data-time="15:00" class="w-full text-center text-[12px] font-mono text-ink-dim dark:text-ink-dim-dark border border-line dark:border-line-dark rounded py-2.5 transition-all duration-150 hover:border-brass-dim hover:text-brass dark:hover:text-brass-dark hover:-translate-y-0.5 active:translate-y-0">15:00</button></td><td class="p-1"><button type="button" data-slot data-day="Sex, 03/07" data-time="15:00" class="w-full text-center text-[12px] font-mono text-ink-dim dark:text-ink-dim-dark border border-line dark:border-line-dark rounded py-2.5 transition-all duration-150 hover:border-brass-dim hover:text-brass dark:hover:text-brass-dark hover:-translate-y-0.5 active:translate-y-0">15:00</button></td><td class="p-1"><button type="button" data-slot data-day="Sáb, 04/07" data-time="15:00" class="w-full text-center text-[12px] font-mono text-ink-dim dark:text-ink-dim-dark border border-line dark:border-line-dark rounded py-2.5 transition-all duration-150 hover:border-brass-dim hover:text-brass dark:hover:text-brass-dark hover:-translate-y-0.5 active:translate-y-0">15:00</button></td><td class="p-1"><button type="button" data-slot data-day="Ter, 07/07" data-time="15:00" class="w-full text-center text-[12px] font-mono text-ink-dim dark:text-ink-dim-dark border border-line dark:border-line-dark rounded py-2.5 transition-all duration-150 hover:border-brass-dim hover:text-brass dark:hover:text-brass-dark hover:-translate-y-0.5 active:translate-y-0">15:00</button></td><td class="p-1"><button type="button" data-slot data-day="Qua, 08/07" data-time="15:00" class="w-full text-center text-[12px] font-mono text-ink-dim dark:text-ink-dim-dark border border-line dark:border-line-dark rounded py-2.5 transition-all duration-150 hover:border-brass-dim hover:text-brass dark:hover:text-brass-dark hover:-translate-y-0.5 active:translate-y-0">15:00</button></td>
-      </tr>
-      <tr>
-        <td class="p-1 pr-3 text-right font-mono text-[11px] text-ink-dim dark:text-ink-dim-dark whitespace-nowrap">16:00</td>
-        <td class="p-1"><button type="button" data-slot data-day="Qua, 01/07" data-time="16:00" class="w-full text-center text-[12px] font-mono text-ink-dim dark:text-ink-dim-dark border border-line dark:border-line-dark rounded py-2.5 transition-all duration-150 hover:border-brass-dim hover:text-brass dark:hover:text-brass-dark hover:-translate-y-0.5 active:translate-y-0">16:00</button></td><td class="p-1"><button type="button" data-slot data-day="Qui, 02/07" data-time="16:00" class="w-full text-center text-[12px] font-mono text-ink-dim dark:text-ink-dim-dark border border-line dark:border-line-dark rounded py-2.5 transition-all duration-150 hover:border-brass-dim hover:text-brass dark:hover:text-brass-dark hover:-translate-y-0.5 active:translate-y-0">16:00</button></td><td class="p-1"><button type="button" data-slot data-day="Sex, 03/07" data-time="16:00" class="w-full text-center text-[12px] font-mono text-ink-dim dark:text-ink-dim-dark border border-line dark:border-line-dark rounded py-2.5 transition-all duration-150 hover:border-brass-dim hover:text-brass dark:hover:text-brass-dark hover:-translate-y-0.5 active:translate-y-0">16:00</button></td><td class="p-1"><button type="button" data-slot data-day="Sáb, 04/07" data-time="16:00" class="w-full text-center text-[12px] font-mono text-ink-dim dark:text-ink-dim-dark border border-line dark:border-line-dark rounded py-2.5 transition-all duration-150 hover:border-brass-dim hover:text-brass dark:hover:text-brass-dark hover:-translate-y-0.5 active:translate-y-0">16:00</button></td><td class="p-1"><span class="block text-center text-[11px] font-mono text-ink-dim dark:text-ink-dim-dark bg-surface-2 dark:bg-surface-2-dark rounded py-2.5 cursor-not-allowed line-through decoration-line dark:decoration-line-dark">Ocupado</span></td><td class="p-1"><button type="button" data-slot data-day="Qua, 08/07" data-time="16:00" class="w-full text-center text-[12px] font-mono text-ink-dim dark:text-ink-dim-dark border border-line dark:border-line-dark rounded py-2.5 transition-all duration-150 hover:border-brass-dim hover:text-brass dark:hover:text-brass-dark hover:-translate-y-0.5 active:translate-y-0">16:00</button></td>
-      </tr>
-      <tr>
-        <td class="p-1 pr-3 text-right font-mono text-[11px] text-ink-dim dark:text-ink-dim-dark whitespace-nowrap">17:00</td>
-        <td class="p-1"><button type="button" data-slot data-day="Qua, 01/07" data-time="17:00" class="w-full text-center text-[12px] font-mono text-ink-dim dark:text-ink-dim-dark border border-line dark:border-line-dark rounded py-2.5 transition-all duration-150 hover:border-brass-dim hover:text-brass dark:hover:text-brass-dark hover:-translate-y-0.5 active:translate-y-0">17:00</button></td><td class="p-1"><button type="button" data-slot data-day="Qui, 02/07" data-time="17:00" class="w-full text-center text-[12px] font-mono text-ink-dim dark:text-ink-dim-dark border border-line dark:border-line-dark rounded py-2.5 transition-all duration-150 hover:border-brass-dim hover:text-brass dark:hover:text-brass-dark hover:-translate-y-0.5 active:translate-y-0">17:00</button></td><td class="p-1"><button type="button" data-slot data-day="Sex, 03/07" data-time="17:00" class="w-full text-center text-[12px] font-mono text-ink-dim dark:text-ink-dim-dark border border-line dark:border-line-dark rounded py-2.5 transition-all duration-150 hover:border-brass-dim hover:text-brass dark:hover:text-brass-dark hover:-translate-y-0.5 active:translate-y-0">17:00</button></td><td class="p-1"><button type="button" data-slot data-day="Sáb, 04/07" data-time="17:00" class="w-full text-center text-[12px] font-mono text-ink-dim dark:text-ink-dim-dark border border-line dark:border-line-dark rounded py-2.5 transition-all duration-150 hover:border-brass-dim hover:text-brass dark:hover:text-brass-dark hover:-translate-y-0.5 active:translate-y-0">17:00</button></td><td class="p-1"><button type="button" data-slot data-day="Ter, 07/07" data-time="17:00" class="w-full text-center text-[12px] font-mono text-ink-dim dark:text-ink-dim-dark border border-line dark:border-line-dark rounded py-2.5 transition-all duration-150 hover:border-brass-dim hover:text-brass dark:hover:text-brass-dark hover:-translate-y-0.5 active:translate-y-0">17:00</button></td><td class="p-1"><button type="button" data-slot data-day="Qua, 08/07" data-time="17:00" class="w-full text-center text-[12px] font-mono text-ink-dim dark:text-ink-dim-dark border border-line dark:border-line-dark rounded py-2.5 transition-all duration-150 hover:border-brass-dim hover:text-brass dark:hover:text-brass-dark hover:-translate-y-0.5 active:translate-y-0">17:00</button></td>
-      </tr>
-      <tr>
-        <td class="p-1 pr-3 text-right font-mono text-[11px] text-ink-dim dark:text-ink-dim-dark whitespace-nowrap">18:00</td>
-        <td class="p-1"><button type="button" data-slot data-day="Qua, 01/07" data-time="18:00" class="w-full text-center text-[12px] font-mono text-ink-dim dark:text-ink-dim-dark border border-line dark:border-line-dark rounded py-2.5 transition-all duration-150 hover:border-brass-dim hover:text-brass dark:hover:text-brass-dark hover:-translate-y-0.5 active:translate-y-0">18:00</button></td><td class="p-1"><button type="button" data-slot data-day="Qui, 02/07" data-time="18:00" class="w-full text-center text-[12px] font-mono text-ink-dim dark:text-ink-dim-dark border border-line dark:border-line-dark rounded py-2.5 transition-all duration-150 hover:border-brass-dim hover:text-brass dark:hover:text-brass-dark hover:-translate-y-0.5 active:translate-y-0">18:00</button></td><td class="p-1"><button type="button" data-slot data-day="Sex, 03/07" data-time="18:00" class="w-full text-center text-[12px] font-mono text-ink-dim dark:text-ink-dim-dark border border-line dark:border-line-dark rounded py-2.5 transition-all duration-150 hover:border-brass-dim hover:text-brass dark:hover:text-brass-dark hover:-translate-y-0.5 active:translate-y-0">18:00</button></td><td class="p-1"><span class="block text-center text-[11px] text-ink-dim/40 dark:text-ink-dim-dark/30 py-2.5">—</span></td><td class="p-1"><button type="button" data-slot data-day="Ter, 07/07" data-time="18:00" class="w-full text-center text-[12px] font-mono text-ink-dim dark:text-ink-dim-dark border border-line dark:border-line-dark rounded py-2.5 transition-all duration-150 hover:border-brass-dim hover:text-brass dark:hover:text-brass-dark hover:-translate-y-0.5 active:translate-y-0">18:00</button></td><td class="p-1"><button type="button" data-slot data-day="Qua, 08/07" data-time="18:00" class="w-full text-center text-[12px] font-mono text-ink-dim dark:text-ink-dim-dark border border-line dark:border-line-dark rounded py-2.5 transition-all duration-150 hover:border-brass-dim hover:text-brass dark:hover:text-brass-dark hover:-translate-y-0.5 active:translate-y-0">18:00</button></td>
-      </tr>
-      <tr>
-        <td class="p-1 pr-3 text-right font-mono text-[11px] text-ink-dim dark:text-ink-dim-dark whitespace-nowrap">19:00</td>
-        <td class="p-1"><button type="button" data-slot data-day="Qua, 01/07" data-time="19:00" class="w-full text-center text-[12px] font-mono text-ink-dim dark:text-ink-dim-dark border border-line dark:border-line-dark rounded py-2.5 transition-all duration-150 hover:border-brass-dim hover:text-brass dark:hover:text-brass-dark hover:-translate-y-0.5 active:translate-y-0">19:00</button></td><td class="p-1"><button type="button" data-slot data-day="Qui, 02/07" data-time="19:00" class="w-full text-center text-[12px] font-mono text-ink-dim dark:text-ink-dim-dark border border-line dark:border-line-dark rounded py-2.5 transition-all duration-150 hover:border-brass-dim hover:text-brass dark:hover:text-brass-dark hover:-translate-y-0.5 active:translate-y-0">19:00</button></td><td class="p-1"><button type="button" data-slot data-day="Sex, 03/07" data-time="19:00" class="w-full text-center text-[12px] font-mono text-ink-dim dark:text-ink-dim-dark border border-line dark:border-line-dark rounded py-2.5 transition-all duration-150 hover:border-brass-dim hover:text-brass dark:hover:text-brass-dark hover:-translate-y-0.5 active:translate-y-0">19:00</button></td><td class="p-1"><span class="block text-center text-[11px] text-ink-dim/40 dark:text-ink-dim-dark/30 py-2.5">—</span></td><td class="p-1"><button type="button" data-slot data-day="Ter, 07/07" data-time="19:00" class="w-full text-center text-[12px] font-mono text-ink-dim dark:text-ink-dim-dark border border-line dark:border-line-dark rounded py-2.5 transition-all duration-150 hover:border-brass-dim hover:text-brass dark:hover:text-brass-dark hover:-translate-y-0.5 active:translate-y-0">19:00</button></td><td class="p-1"><button type="button" data-slot data-day="Qua, 08/07" data-time="19:00" class="w-full text-center text-[12px] font-mono text-ink-dim dark:text-ink-dim-dark border border-line dark:border-line-dark rounded py-2.5 transition-all duration-150 hover:border-brass-dim hover:text-brass dark:hover:text-brass-dark hover:-translate-y-0.5 active:translate-y-0">19:00</button></td>
-      </tr>
-  </tbody>
-</table>
+        <div class="border border-line dark:border-line-dark rounded-xl p-4 overflow-x-auto bg-white dark:bg-slate-900" id="slotsTable">
+          <table class="w-full border-collapse">
+            <thead>
+              <tr>
+                <th class="p-1 pb-3"></th>
+                @php
+                  $diasSemana = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+                  $colunasDias = [];
+                  
+                  for ($i = 0; $i < 6; $i++) {
+                      $timestamp = strtotime("+$i days");
+                      $colunasDias[] = [
+                          'db_date' => date('Y-m-d', $timestamp),
+                          'dia_texto' => $diasSemana[date('w', $timestamp)],
+                          'dia_numero' => date('d', $timestamp),
+                          'label_completo' => $diasSemana[date('w', $timestamp)] . ', ' . date('d/m', $timestamp)
+                      ];
+                  }
+                  
+                  $horarios = ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00'];
+                @endphp
+
+                @foreach($colunasDias as $dia)
+                  <th class="p-1 pb-3 text-center font-mono text-[11px] font-medium text-ink-dim dark:text-ink-dim-dark whitespace-nowrap">
+                    {{ $dia['dia_texto'] }}
+                    <span class="block text-brass dark:text-brass-dark text-[13px] font-semibold">{{ $dia['dia_numero'] }}</span>
+                  </th>
+                @endforeach
+              </tr>
+            </thead>
+            <tbody>
+              @foreach($horarios as $hora)
+                <tr>
+                  <td class="p-1 pr-3 text-right font-mono text-[11px] text-ink-dim dark:text-ink-dim-dark whitespace-nowrap">
+                    {{ $hora }}
+                  </td>
+
+                  @foreach($colunasDias as $dia)
+                    @php
+                        $estaOcupado = false;
+                        
+                        // Verifica se existem agendamentos e roda um loop limpo e seguro
+                        if (isset($agendamentos) && (is_array($agendamentos) || is_object($agendamentos))) {
+                            foreach ($agendamentos as $value) {
+                                if ($value && isset($value->date) && isset($value->time)) {
+                                    if ($value->date === $dia['db_date'] && date('H:i', strtotime($value->time)) === $hora) {
+                                        $estaOcupado = true;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+
+                        $ehDomingo = date('w', strtotime($dia['db_date'])) == 0;
+                    @endphp
+
+                    <td class="p-1">
+                      @if($estaOcupado)
+                        <span class="block text-center text-[11px] font-mono text-ink-dim dark:text-ink-dim-dark bg-surface-2 dark:bg-surface-2-dark rounded py-2.5 cursor-not-allowed line-through decoration-line dark:decoration-line-dark">
+                          Ocupado
+                        </span>
+                      @elseif($ehDomingo)
+                        <span class="block text-center text-[11px] text-ink-dim/40 dark:text-ink-dim-dark/30 py-2.5">—</span>
+                      @else
+                        <button type="button" 
+                                data-slot 
+                                data-db-date="{{ $dia['db_date'] }}"
+                                data-day="{{ $dia['label_completo'] }}" 
+                                data-time="{{ $hora }}" 
+                                class="w-full text-center text-[12px] font-mono text-ink-dim dark:text-ink-dim-dark border border-line dark:border-line-dark rounded py-2.5 transition-all duration-150 hover:border-brass-dim hover:text-brass dark:hover:text-brass-dark hover:-translate-y-0.5 active:translate-y-0">
+                          {{ $hora }}
+                        </button>
+                      @endif
+                    </td>
+                  @endforeach
+                </tr>
+              @endforeach
+            </tbody>
+          </table>
         </div>
 
         <div id="slotError" class="hidden mt-3 text-[13px] text-brick dark:text-brick-dark font-mono">Selecione um horário na tabela acima.</div>
       </div>
 
-      <!-- 04 · SEUS DADOS -->
       <div data-reveal>
         <div class="flex items-baseline gap-3 mb-6">
           <span class="font-mono text-[13px] text-brass dark:text-brass-dark">04</span>
@@ -379,17 +395,17 @@
         <div class="grid sm:grid-cols-2 gap-4">
           <div class="sm:col-span-2">
             <label for="clientName" class="block text-[13px] text-ink-dim dark:text-ink-dim-dark mb-1.5">Nome completo</label>
-            <input type="text" id="clientName" required placeholder="Como podemos te chamar"
+            <input type="text" id="clientName" name="name" required placeholder="Como podemos te chamar"
               class="w-full bg-transparent border border-line dark:border-line-dark rounded-lg px-4 py-3 text-sm outline-none focus:border-brass dark:focus:border-brass-dark transition-colors">
           </div>
           <div class="sm:col-span-2">
             <label for="clientPhone" class="block text-[13px] text-ink-dim dark:text-ink-dim-dark mb-1.5">WhatsApp</label>
-            <input type="tel" id="clientPhone" required placeholder="(15) 99999-9999"
+            <input type="tel" id="clientPhone" name="phone" required placeholder="(15) 99999-9999"
               class="w-full bg-transparent border border-line dark:border-line-dark rounded-lg px-4 py-3 text-sm outline-none focus:border-brass dark:focus:border-brass-dark transition-colors">
           </div>
           <div class="sm:col-span-2">
             <label for="clientNote" class="block text-[13px] text-ink-dim dark:text-ink-dim-dark mb-1.5">Observações <span class="text-ink-dim/60 dark:text-ink-dim-dark/60">(opcional)</span></label>
-            <textarea id="clientNote" rows="3" placeholder="Alguma preferência ou observação?"
+            <textarea id="clientNote" name="notes" rows="3" placeholder="Alguma preferência ou observação?"
               class="w-full bg-transparent border border-line dark:border-line-dark rounded-lg px-4 py-3 text-sm outline-none focus:border-brass dark:focus:border-brass-dark transition-colors resize-none"></textarea>
           </div>
         </div>
@@ -397,7 +413,6 @@
 
     </form>
 
-    <!-- ============ RESUMO / TICKET ============ -->
     <aside data-reveal class="lg:sticky lg:top-[100px]">
       <div class="relative bg-card dark:bg-card-dark border border-dashed border-brass-dim dark:border-brass-dim-dark rounded-xl px-6 pt-6 pb-5.5">
         <span class="absolute -left-3 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full bg-surface dark:bg-surface-dark border border-dashed border-brass-dim dark:border-brass-dim-dark"></span>
@@ -428,7 +443,7 @@
       </div>
 
       <div class="mt-5 space-y-3">
-        <button type="button" id="confirmBtn"
+        <button type="submit" form="bookingForm" id="confirmBtn"
           class="w-full font-mono text-[13px] tracking-wide bg-brass dark:bg-brass-dark text-white dark:text-surface-dark px-6 py-4 rounded transition-all duration-150 hover:opacity-90 hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-40 disabled:pointer-events-none">
           Confirmar agendamento
         </button>
@@ -447,7 +462,6 @@
   </div>
 </section>
 
-<!-- ================= FOOTER ================= -->
 <footer class="border-t border-line dark:border-line-dark py-6">
   <div class="max-w-[1120px] mx-auto px-8 flex flex-wrap justify-between items-center gap-3 text-xs text-ink-dim dark:text-ink-dim-dark">
     <span>© 2026 Alameda Barbearia</span>
@@ -546,33 +560,45 @@
     });
   });
 
-  document.querySelectorAll('[data-slot]').forEach(function(btn){
-    btn.addEventListener('click', function(){
-      document.querySelectorAll('[data-slot]').forEach(function(b){
-        b.classList.remove('bg-brass', 'dark:bg-brass-dark', 'text-white', 'dark:text-surface-dark', 'border-brass', 'dark:border-brass-dark');
-        b.classList.add('border-line', 'dark:border-line-dark');
-      });
-      btn.classList.add('bg-brass', 'dark:bg-brass-dark', 'text-white', 'dark:text-surface-dark', 'border-brass', 'dark:border-brass-dark');
-      btn.classList.remove('border-line', 'dark:border-line-dark');
-      state.day = btn.dataset.day;
-      state.time = btn.dataset.time;
-      document.getElementById('slotError').classList.add('hidden');
-      updateSummary();
+  // Evento de clique para as células injetadas
+  document.addEventListener('click', function(e) {
+    var btn = e.target.closest('[data-slot]');
+    if (!btn) return;
+    
+    document.querySelectorAll('[data-slot]').forEach(function(b){
+      b.classList.remove('bg-brass', 'dark:bg-brass-dark', 'text-white', 'dark:text-surface-dark', 'border-brass', 'dark:border-brass-dark');
+      b.classList.add('border-line', 'dark:border-line-dark');
     });
+    btn.classList.add('bg-brass', 'dark:bg-brass-dark', 'text-white', 'dark:text-surface-dark', 'border-brass', 'dark:border-brass-dark');
+    btn.classList.remove('border-line', 'dark:border-line-dark');
+    state.day = btn.dataset.day;
+    state.time = btn.dataset.time;
+
+    // Alimenta os inputs nativos escondidos que enviam os dados ao Laravel
+    document.getElementById('input_selected_date').value = btn.dataset.dbDate;
+    document.getElementById('input_selected_time').value = btn.dataset.time;
+
+    document.getElementById('slotError').classList.add('hidden');
+    updateSummary();
   });
 
   document.getElementById('clientName').addEventListener('input', updateSummary);
   document.getElementById('clientPhone').addEventListener('input', updateSummary);
   document.getElementById('clientNote').addEventListener('input', updateSummary);
 
-  document.getElementById('confirmBtn').addEventListener('click', function(){
+  // Tratamento de envio do formulário
+  document.getElementById('bookingForm').addEventListener('submit', function(e){
     if (!state.day || !state.time){
+      e.preventDefault();
       document.getElementById('slotError').classList.remove('hidden');
       document.getElementById('slotsTable').scrollIntoView({ behavior: 'smooth', block: 'center' });
-      return;
     }
-    document.getElementById('confirmMsg').classList.remove('hidden');
-    document.getElementById('confirmMsg').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  });
+
+  document.getElementById('confirmBtn').addEventListener('click', function(e) {
+    if (state.day && state.time && document.getElementById('clientName').value.trim() && document.getElementById('clientPhone').value.trim()) {
+      document.getElementById('bookingForm').submit();
+    }
   });
 
   updateSummary();
