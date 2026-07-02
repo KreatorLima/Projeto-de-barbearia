@@ -102,6 +102,7 @@ O dashboard do cliente (Alameda Barbearia) inclui:
 - 📝 **Depoimentos de clientes** - Seção de avaliações e comentários
 - 🌙 **Tema escuro** - Suporte total com cores customizadas (tons brass/ouro)
 - 📱 **Design responsivo** - Navegação mobile-friendly com menu hamburguês
+ - **Limpeza recente**: removido código comentado não utilizado em `database/seeders/DatabaseSeeder.php`.
 
 ## Estrutura do Projeto
 
