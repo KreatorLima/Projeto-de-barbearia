@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\SchedulingController;
 
 Route::get('/', function () {
     return view('index');
@@ -32,5 +33,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/admin/dashboard', [DashboardController::class, 'adminIndex'])->name('admin.dashboard');
     });
 });
+
+Route::get('/agendamento', [SchedulingController::class, 'index'])->name('scheduling.index');
 
 require __DIR__.'/auth.php';

@@ -58,14 +58,13 @@
   }
 </script>
 </head>
-<body class="bg-surface dark:bg-surface-dark text-ink dark:text-ink-dark font-sans leading-relaxed antialiased transition-colors duration-200">
+<body class="bg-red-200 dark:bg-surface-dark text-ink dark:text-ink-dark font-sans leading-relaxed antialiased transition-colors duration-200">
 
 <!-- ================= NAV ================= -->
 <header class="sticky top-0 z-50 border-b border-line dark:border-line-dark bg-surface/90 dark:bg-surface-dark/90 backdrop-blur">
   <nav class="max-w-[1120px] mx-auto px-8 h-[76px] flex items-center justify-between">
     <div class="flex items-center gap-2.5 font-display text-xl tracking-wide">
-      <img src="logo.png" alt="Alameda Barbearia" class="h-8 w-8 invert dark:invert-0" />
-      Alameda Barbearia
+      <img src="/img/logo.png" alt="Alameda Barbearia" class="h-14 w-14 invert dark:invert-0" />
     </div>
     <div class="hidden md:flex gap-8 text-sm text-ink-dim dark:text-ink-dim-dark">
       <a href="#agende-ja" data-nav-link class="hover:text-brass dark:hover:text-brass-dark transition-colors">Agende já</a>
@@ -112,7 +111,7 @@
         Barba, corte e navalha do jeito tradicional — com agenda online pra você não perder tempo esperando na cadeira errada.
       </p>
       <div class="flex flex-wrap items-center gap-3.5">
-        <a href="#" class="font-mono text-[13px] tracking-wide bg-brass dark:bg-brass-dark text-white dark:text-surface-dark px-7 py-4 rounded hover:opacity-90">
+        <a href="{{ route('scheduling.index') }}" class="font-mono text-[13px] tracking-wide bg-brass dark:bg-brass-dark text-white dark:text-surface-dark px-7 py-4 rounded hover:opacity-90">
           Ver horários disponíveis
         </a>
         <a href="#servicos" class="font-mono text-[13px] tracking-wide text-ink-dim dark:text-ink-dim-dark border-b border-line dark:border-line-dark py-4 hover:text-ink dark:hover:text-ink-dark hover:border-ink-dim">
@@ -180,7 +179,7 @@
       <span class="font-mono text-xs tracking-[0.14em] uppercase text-brass dark:text-brass-dark">Nossa história</span>
       <h2 class="font-display uppercase text-[32px] md:text-[42px] mt-2.5">Sobre nós</h2>
       <p class="text-ink-dim dark:text-ink-dim-dark text-[15px] mt-4">
-        Abrimos as portas em 2016 numa esquina do Centro de Tatuí, com uma cadeira e uma navalha.
+        Abrimos as portas em 2016 numa esquina do Centro de Boituva, com uma cadeira e uma navalha.
         Hoje somos três barbeiros e uma clientela que virou vizinhança. O compromisso continua o mesmo:
         atendimento marcado, sem enrolação, e um corte que dura a semana inteira.
       </p>
@@ -313,7 +312,7 @@
     <div class="grid md:grid-cols-[1.2fr_0.8fr_0.8fr] gap-12">
       <div>
         <h3 class="font-mono text-[15px] text-brass dark:text-brass-dark mb-4">Endereço</h3>
-        <p class="text-sm text-ink-dim dark:text-ink-dim-dark">Rua das Alamedas, 214 — Centro<br>Tatuí, SP</p>
+        <p class="text-sm text-ink-dim dark:text-ink-dim-dark">Rua das Alamedas, 214 — Centro<br>Boituva, SP</p>
         <div class="flex gap-3.5 mt-3.5">
           <a href="#" class="text-[13px] text-ink-dim dark:text-ink-dim-dark border-b border-line dark:border-line-dark">Instagram</a>
           <a href="#" class="text-[13px] text-ink-dim dark:text-ink-dim-dark border-b border-line dark:border-line-dark">WhatsApp</a>
@@ -346,8 +345,7 @@
 <!-- ================= FOOTER ================= -->
 <footer class="border-t border-line dark:border-line-dark py-6">
   <div class="max-w-[1120px] mx-auto px-8 flex flex-wrap justify-between items-center gap-3 text-xs text-ink-dim dark:text-ink-dim-dark">
-    <span>© 2026 Alameda Barbearia</span>
-    <span>Feito para rodar em Laravel + Tailwind</span>
+    <span>© 2026 Barber shop</span>
   </div>
 </footer>
 
