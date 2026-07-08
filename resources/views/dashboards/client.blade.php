@@ -66,22 +66,37 @@
     <div class="flex items-center gap-2.5 font-display text-xl tracking-wide">
       <img src="/img/logo.png" alt="Alameda Barbearia" class="h-14 w-14 invert dark:invert-0" />
     </div>
+    
     <div class="hidden md:flex gap-8 text-sm text-ink-dim dark:text-ink-dim-dark">
       <a href="#agende-ja" data-nav-link class="hover:text-brass dark:hover:text-brass-dark transition-colors">Agende já</a>
       <a href="#sobre" data-nav-link class="hover:text-brass dark:hover:text-brass-dark transition-colors">Sobre nós</a>
       <a href="#servicos" data-nav-link class="hover:text-brass dark:hover:text-brass-dark transition-colors">Serviços</a>
       <a href="#contato" data-nav-link class="hover:text-brass dark:hover:text-brass-dark transition-colors">Contatos</a>
     </div>
-    <div class="flex items-center">
-      <a href="#agende-ja" class="hidden sm:inline-block font-mono text-xs tracking-wide border border-brass-dim dark:border-brass-dim-dark text-brass dark:text-brass-dark px-5 py-2.5 rounded hover:bg-brass dark:hover:bg-brass-dark hover:text-white dark:hover:text-surface-dark whitespace-nowrap">
+    
+    <div class="flex items-center gap-3">
+      <a href="{{ route('scheduling.index') }}" class="hidden sm:inline-block font-mono text-xs tracking-wide border border-brass-dim dark:border-brass-dim-dark text-brass dark:text-brass-dark px-5 py-2.5 rounded hover:bg-brass dark:hover:bg-brass-dark hover:text-white dark:hover:text-surface-dark whitespace-nowrap">
         Agendar horário
       </a>
+
       <button id="themeToggle" type="button" aria-label="Alternar tema claro/escuro"
-        class="ml-3 w-9 h-9 rounded border border-line dark:border-line-dark text-ink-dim dark:text-ink-dim-dark hover:border-brass-dim hover:text-brass dark:hover:text-brass-dark">
+        class="w-9 h-9 rounded border border-line dark:border-line-dark text-ink-dim dark:text-ink-dim-dark hover:border-brass-dim hover:text-brass dark:hover:text-brass-dark">
         ◐
       </button>
+
+      <form method="POST" action="{{ route('logout') }}" class="inline">
+        @csrf
+        <button type="submit" aria-label="Sair da conta" class="hidden sm:flex w-9 h-9 rounded border border-red-500/30 text-red-500 dark:text-red-400 hover:bg-red-500 hover:text-white dark:hover:text-white transition-colors items-center justify-center">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 8v-2a2 2 0 0 0 -2 -2h-7a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2 -2v-2" />
+            <path d="M9 12h12l-3 -3" />
+            <path d="M18 15l3 -3" />
+          </svg>
+        </button>
+      </form>
+      
       <button id="menuToggle" type="button" aria-label="Abrir menu" aria-expanded="false"
-        class="md:hidden ml-3 w-9 h-9 rounded border border-line dark:border-line-dark text-ink-dim dark:text-ink-dim-dark hover:border-brass-dim hover:text-brass dark:hover:text-brass-dark flex items-center justify-center">
+        class="md:hidden w-9 h-9 rounded border border-line dark:border-line-dark text-ink-dim dark:text-ink-dim-dark hover:border-brass-dim hover:text-brass dark:hover:text-brass-dark flex items-center justify-center">
         <i class="ti ti-menu-2" style="font-size:18px" aria-hidden="true" id="menuIcon"></i>
       </button>
     </div>

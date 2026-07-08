@@ -77,10 +77,10 @@
       <img src="/img/logo.png" alt="Alameda Barbearia" class="h-14 w-14 invert dark:invert-0" />
     </a>
     <div class="hidden md:flex gap-8 text-sm text-ink-dim dark:text-ink-dim-dark">
-      <a href="index.html#sobre" class="nav-link hover:text-brass dark:hover:text-brass-dark transition-colors">Sobre nós</a>
-      <a href="index.html#servicos" class="nav-link hover:text-brass dark:hover:text-brass-dark transition-colors">Serviços</a>
-      <a href="index.html#contato" class="nav-link hover:text-brass dark:hover:text-brass-dark transition-colors">Contatos</a>
-      <a href="agendamento.html" class="nav-link text-brass dark:text-brass-dark">Agendar já</a>
+      <a href="{{ route('dashboard') }}" class="nav-link hover:text-brass dark:hover:text-brass-dark transition-colors">Sobre nós</a>
+      <a href="{{ route('dashboard') }}#servicos" class="nav-link hover:text-brass dark:hover:text-brass-dark transition-colors">Serviços</a>
+      <a href="{{ route('dashboard') }}#contato" class="nav-link hover:text-brass dark:hover:text-brass-dark transition-colors">Contatos</a>
+      <a href="{{ route('scheduling.index') }}" class="nav-link text-brass dark:text-brass-dark">Agendar já</a>
     </div>
     <div class="flex items-center">
       <button id="themeToggle" type="button" aria-label="Alternar tema claro/escuro"
@@ -507,7 +507,7 @@
   // ---------- estado do agendamento ----------
   var state = { service: null, price: 0, barber: 'Sem preferência', day: null, time: null };
 
-  var WHATSAPP_NUMBER = '5515991743250';
+  var WHATSAPP_NUMBER = '5515991145977';
 
   function money(v){
     return 'R$ ' + v.toFixed(2).replace('.', ',');
