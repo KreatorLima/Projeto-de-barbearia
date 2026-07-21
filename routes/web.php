@@ -37,4 +37,11 @@ Route::middleware('auth')->group(function () {
 Route::get('/agendamento', [SchedulingController::class, 'index'])->name('scheduling.index');
 Route::post('/agendamento', [SchedulingController::class, 'store'])->name('agendamentos.store');
 
+Route::get('/manager/dashboard', [SchedulingController::class, 'manager'])
+    ->middleware(['auth', 'role:manager'])
+    ->name('manager.dashboard');
+
+Route::post('/agendamentos/{id}/status', [SchedulingController::class, 'updateStatus'])
+    ->name('scheduling.updateStatus');
+    
 require __DIR__.'/auth.php';

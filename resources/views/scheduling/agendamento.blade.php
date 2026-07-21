@@ -73,7 +73,7 @@
 
 <header class="sticky top-0 z-50 border-b border-line dark:border-line-dark bg-surface/90 dark:bg-surface-dark/90 backdrop-blur">
   <nav class="max-w-[1120px] mx-auto px-8 h-[76px] flex items-center justify-between">
-    <a href="index.html" class="flex items-center gap-2.5 font-display text-xl tracking-wide hover:opacity-80 transition-opacity">
+    <a href="{{ route('dashboard') }}" class="flex items-center gap-2.5 font-display text-xl tracking-wide hover:opacity-80 transition-opacity">
       <img src="/img/logo.png" alt="Alameda Barbearia" class="h-14 w-14 invert dark:invert-0" />
     </a>
     <div class="hidden md:flex gap-8 text-sm text-ink-dim dark:text-ink-dim-dark">
@@ -303,7 +303,7 @@
         </div>
         <p class="text-[13px] text-ink-dim dark:text-ink-dim-dark mb-5">Toque em um horário livre na tabela. Células em cinza já estão ocupadas.</p>
 
-        <div class="border border-line dark:border-line-dark rounded-xl p-4 overflow-x-auto bg-white dark:bg-slate-900" id="slotsTable">
+        <div class="border border-line dark:border-line-dark rounded-xl p-4 overflow-x-auto bg-white dark:bg-surface-dark" id="slotsTable">
           <table class="w-full border-collapse">
             <thead>
               <tr>
