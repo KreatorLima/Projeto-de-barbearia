@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use Illuminate\Http\Request;
+use App\Models\Scheduling;
 
 class DashboardController extends Controller
 {
@@ -27,6 +28,8 @@ class DashboardController extends Controller
     }
 
     public function adminIndex() {
-        return view('dashboards.admin');
+
+        $agendamentos = Scheduling::orderBy('date', 'asc')->get();
+        return view('dashboards.admin', compact('agendamentos'));
     }
 }

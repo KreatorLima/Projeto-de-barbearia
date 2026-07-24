@@ -332,7 +332,7 @@
     entries.forEach(function(entry){
       if (entry.isIntersecting){ entry.target.classList.add('in-view'); io.unobserve(entry.target); }
     });
-  }, { threshold: 0.1 });
+  }, { threshold: 0.4 });
   revealEls.forEach(function(el, i){ el.style.transitionDelay = (i * 80) + 'ms'; io.observe(el); });
 </script>
 
