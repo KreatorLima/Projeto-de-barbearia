@@ -9,8 +9,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('schedulings', function (Blueprint $table) {
-            // Adiciona a coluna 'barber' após a coluna 'service'
-            $table->string('barber')->after('service');
+            if (!Schema::hasColumn('schedulings', 'barber')) {
+                $table->string('barber')->after('service');
+            }
         });
     }
 

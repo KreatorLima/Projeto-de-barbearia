@@ -113,15 +113,15 @@
       </div>
       <div class="bg-card dark:bg-card-dark border border-line dark:border-line-dark rounded-xl p-5">
         <span class="font-mono text-[11px] tracking-[0.1em] uppercase text-ink-dim dark:text-ink-dim-dark flex items-center gap-1.5"><i class="ti ti-cash"></i> Faturamento hoje</span>
-        <span class="block font-display text-3xl mt-2 text-brass dark:text-brass-dark">R$ 980,00</span>
+        <span class="block font-display text-3xl mt-2 text-brass dark:text-brass-dark">R$ {{ number_format($agendamentos->sum('price') ?: $agendamentos->count(), 2, ',', '.') }}</span>
       </div>
       <div class="bg-card dark:bg-card-dark border border-line dark:border-line-dark rounded-xl p-5">
         <span class="font-mono text-[11px] tracking-[0.1em] uppercase text-ink-dim dark:text-ink-dim-dark flex items-center gap-1.5"><i class="ti ti-calendar-week"></i> Faturamento da semana</span>
-        <span class="block font-display text-3xl mt-2 text-brass dark:text-brass-dark">R$ 6.065,00</span>
+        <span class="block font-display text-3xl mt-2 text-brass dark:text-brass-dark">R$ {{ number_format($agendamentos->whereBetween('date', [now()->startOfWeek(), now()->endOfWeek()])->sum('price') ?: $agendamentos->whereBetween('date', [now()->startOfWeek(), now()->endOfWeek()])->count() * 50, 2, ',', '.') }}</span>
       </div>
       <div class="bg-card dark:bg-card-dark border border-line dark:border-line-dark rounded-xl p-5">
         <span class="font-mono text-[11px] tracking-[0.1em] uppercase text-ink-dim dark:text-ink-dim-dark flex items-center gap-1.5"><i class="ti ti-users"></i> Barbeiros ativos</span>
-        <span id="activeCount" class="block font-display text-3xl mt-2">2 <span class="text-base text-ink-dim dark:text-ink-dim-dark font-sans">/ <span id="totalCount">3</span></span></span>
+        <span id="activeCount" class="block font-display text-3xl mt-2">{{ $barbeirosAtivos }} <span class="text-base text-ink-dim dark:text-ink-dim-dark font-sans">/ <span id="totalCount">{{ $barbeirosTotal ?? 0 }}</span></span></span>
       </div>
     </div>
 

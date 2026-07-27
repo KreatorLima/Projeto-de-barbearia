@@ -13,7 +13,7 @@ Route::get('/dashboard', [DashboardController::class, 'redirect'])
     ->middleware(['auth', 'verified'])
     ->name('dashboard'); // Rota mudada para ir para a dashboard do user/superadmin/admin
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'last.activity'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -36,10 +36,6 @@ Route::middleware('auth')->group(function () {
 
 Route::get('/agendamento', [SchedulingController::class, 'index'])->name('scheduling.index');
 Route::post('/agendamento', [SchedulingController::class, 'store'])->name('agendamentos.store');
-
-Route::get('/manager/dashboard', [SchedulingController::class, 'manager'])
-    ->middleware(['auth', 'role:manager'])
-    ->name('manager.dashboard');
 
 Route::post('/agendamentos/{id}/status', [SchedulingController::class, 'updateStatus'])
     ->name('scheduling.updateStatus');

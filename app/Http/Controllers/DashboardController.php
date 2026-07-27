@@ -3,17 +3,22 @@
 namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Scheduling;
+use App\Models\User;
 
 class DashboardController extends Controller
 {
-    // Rota centralizada para onde o login aponta
+    // Rota centralizada para onde o login aponta junto com a atualização do last_activity
     public function redirect(Request $request)
     {
+        $request->user()->update([
+            'last_activity' => now()
+        ]);
+
         $role = $request->user()->role;
 
         return match ($role) {
             'admin' => redirect()->route('admin.dashboard'),
-            'manager' => redirect()->route('manager.dashboard'), //redirecionamento conforme o usuário for logaod admin/client/manager
+            'manager' => redirect()->route('manager.dashboard'),
             'client' => redirect()->route('client.dashboard'),
             default => redirect()->route('client.dashboard'),
         };
@@ -23,13 +28,31 @@ class DashboardController extends Controller
         return view('dashboards.client');
     }
 
-    public function managerIndex() {
-        return view('dashboards.manager');
+    public function managerIndex()
+    {
+        $agendamentos = Scheduling::where('barber', auth()->user()->name)
+            ->Where('date', today())
+            ->orderBy('time')
+            ->get();
+
+        return view('dashboards.manager', compact('agendamentos'));
     }
 
-    public function adminIndex() {
+    public function adminIndex()
+    {
 
-        $agendamentos = Scheduling::orderBy('date', 'asc')->get();
-        return view('dashboards.admin', compact('agendamentos'));
+        $agendamentos = Scheduling::whereDate('date', today())->get();
+
+        $barbeirosAtivos = User::where('role', 'manager')
+            ->where('last_activity', '>=', now()->subMinutes(5))
+            ->count();
+
+        $barbeirosTotal = User::where('role', 'manager')->count();
+
+        return view('dashboards.admin', compact(
+            'agendamentos',
+            'barbeirosAtivos',
+            'barbeirosTotal'
+        ));
     }
 }

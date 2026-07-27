@@ -14,6 +14,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
             'role' => CheckRole::class, //atalho para facilitar a vida quando organizar rotas do sistema
+            'last.activity' => \App\Http\Middleware\UpdateLastActivity::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
