@@ -42,6 +42,9 @@ class DashboardController extends Controller
     {
 
         $agendamentos = Scheduling::whereDate('date', today())->get();
+        $agendamentosConcluidos = Scheduling::whereDate('date', today())->where('status', 'concluido')->get();
+        $semana = Scheduling::whereBetween('date', [now()->startOfWeek(), now()->endOfWeek()])->where('status', 'concluido')->get();
+        $agendamentosMensais = Scheduling::whereMonth('date', now()->month)->get(); // Agendamentos do mês atual
 
         $barbeirosAtivos = User::where('role', 'manager')
             ->where('last_activity', '>=', now()->subMinutes(5))
@@ -51,6 +54,9 @@ class DashboardController extends Controller
 
         return view('dashboards.admin', compact(
             'agendamentos',
+            'agendamentosMensais',
+            'agendamentosConcluidos',
+            'semana',
             'barbeirosAtivos',
             'barbeirosTotal'
         ));

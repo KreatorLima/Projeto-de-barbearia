@@ -113,11 +113,11 @@
       </div>
       <div class="bg-card dark:bg-card-dark border border-line dark:border-line-dark rounded-xl p-5">
         <span class="font-mono text-[11px] tracking-[0.1em] uppercase text-ink-dim dark:text-ink-dim-dark flex items-center gap-1.5"><i class="ti ti-cash"></i> Faturamento hoje</span>
-        <span class="block font-display text-3xl mt-2 text-brass dark:text-brass-dark">R$ {{ number_format($agendamentos->sum('price') ?: $agendamentos->count(), 2, ',', '.') }}</span>
+        <span class="block font-display text-3xl mt-2 text-brass dark:text-brass-dark">R$ {{ number_format($agendamentosConcluidos->sum('price') ?: $agendamentosConcluidos->count(), 2, ',', '.') }}</span>
       </div>
       <div class="bg-card dark:bg-card-dark border border-line dark:border-line-dark rounded-xl p-5">
         <span class="font-mono text-[11px] tracking-[0.1em] uppercase text-ink-dim dark:text-ink-dim-dark flex items-center gap-1.5"><i class="ti ti-calendar-week"></i> Faturamento da semana</span>
-        <span class="block font-display text-3xl mt-2 text-brass dark:text-brass-dark">R$ {{ number_format($agendamentos->whereBetween('date', [now()->startOfWeek(), now()->endOfWeek()])->sum('price') ?: $agendamentos->whereBetween('date', [now()->startOfWeek(), now()->endOfWeek()])->count() * 50, 2, ',', '.') }}</span>
+        <span class="block font-display text-3xl mt-2 text-brass dark:text-brass-dark">R$ {{ number_format($semana->sum('price') ?: $semana->count() * 50, 2, ',', '.') }}</span>
       </div>
       <div class="bg-card dark:bg-card-dark border border-line dark:border-line-dark rounded-xl p-5">
         <span class="font-mono text-[11px] tracking-[0.1em] uppercase text-ink-dim dark:text-ink-dim-dark flex items-center gap-1.5"><i class="ti ti-users"></i> Barbeiros ativos</span>
@@ -129,10 +129,10 @@
     <div class="mt-4 bg-card dark:bg-card-dark border border-line dark:border-line-dark rounded-xl p-5">
       <div class="flex items-center justify-between mb-2.5 flex-wrap gap-1">
         <span class="font-mono text-[11px] tracking-[0.1em] uppercase text-ink-dim dark:text-ink-dim-dark flex items-center gap-1.5"><i class="ti ti-target-arrow"></i> Meta do mês (todos os barbeiros)</span>
-        <span class="text-[13px] font-medium">268 / 400 cortes</span>
+        <span class="text-[13px] font-medium">{{ $agendamentosMensais->count() }} / 400 cortes</span>
       </div>
       <div class="h-2.5 w-full rounded-full bg-surface-2 dark:bg-surface-2-dark overflow-hidden">
-        <div id="goalBar" class="h-full rounded-full bg-brass dark:bg-brass-dark" style="width:0%" data-target="67"></div>
+        <div id="goalBar" class="h-full rounded-full bg-brass dark:bg-brass-dark" style="width: {{ min(100, ($agendamentosMensais->count() / 400) * 100) }}%" data-target="67"></div>
       </div>
       <p class="text-[13px] text-ink-dim dark:text-ink-dim-dark mt-2.5">Faltam 132 cortes para bater a meta do mês.</p>
     </div>
@@ -296,10 +296,6 @@
     });
   }, { threshold: 0.15 });
   revealEls.forEach(function(el, i){ el.style.transitionDelay = (i * 80) + 'ms'; io.observe(el); });
-
-  // meta mensal
-  var goalBar = document.getElementById('goalBar');
-  requestAnimationFrame(function(){ goalBar.style.width = goalBar.dataset.target + '%'; });
 
   // ---------- dados fixos (mock) ----------
   var WEEK = [

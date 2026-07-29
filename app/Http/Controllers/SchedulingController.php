@@ -14,7 +14,7 @@ class SchedulingController extends Controller
         $agendamentos = Scheduling::orderBy('date', 'asc')->get(); 
         
         // Retorna a view injetando a variável $agendamentos
-        return view('scheduling.agendamento', compact('agendamentos'));
+        return view('scheduling.agendamento', compact('agendamentos', 'agendamentosMensais'));
     }
 
     // Salva o agendamento no Banco de Dados
