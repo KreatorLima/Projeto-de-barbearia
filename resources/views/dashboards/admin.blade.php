@@ -175,7 +175,15 @@
               <th class="px-4 py-3 font-medium text-right">Faturamento</th>
             </tr>
           </thead>
-          <tbody id="weekBody" class="divide-y divide-line dark:divide-line-dark"></tbody>
+          <tbody id="weekBody" class="divide-y divide-line dark:divide-line-dark">
+              @foreach ($diasSemana as $dia)
+              <tr>
+                  <td class="px-4 py-3">{{ ucfirst($dia['dia']->translatedFormat('l')) }}</td>
+                  <td class="px-4 py-3 text-right">{{ $dia['total'] }}</td>
+                  <td class="px-4 py-3 text-right">R$ 0,00</td>
+              </tr>
+              @endforeach
+          </tbody>
           <tfoot>
             <tr class="border-t border-line dark:border-line-dark font-medium">
               <td class="px-4 py-3">Total</td>
@@ -376,25 +384,6 @@
     });
   }, { threshold: 0.15 });
   revealEls.forEach(function(el, i){ el.style.transitionDelay = (i * 80) + 'ms'; io.observe(el); });
-
-  // ---------- dados fixos (mock) ----------
-  var WEEK = [
-    { day: 'Segunda', cuts: 10, revenue: 740 },
-    { day: 'Terça',   cuts: 13, revenue: 905 },
-    { day: 'Quarta',  cuts: 12, revenue: 790 },
-    { day: 'Quinta',  cuts: 13, revenue: 885 },
-    { day: 'Sexta',   cuts: 18, revenue: 1270 },
-    { day: 'Sábado',  cuts: 22, revenue: 1475 },
-  ];
-
-  var BARBERS = [
-    { name: 'Diego Alves', role: 'Barbeiro-chefe', phone: '(15) 98888-1111', status: 'ativo', cuts: 39, revenue: 2970 },
-    { name: 'Rafael Melo', role: 'Barbeiro', phone: '(15) 98888-6666', status: 'ativo', cuts: 29, revenue: 1870 },
-    { name: 'João Silva', role: 'Barbeiro', phone: '(15) 98888-0001', status: 'inativo', cuts: 20, revenue: 1225 },
-  ];
-
-  function money(v){ return 'R$ ' + v.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
-  function initials(name){ return name.trim().split(' ').slice(0,2).map(function(w){ return w[0]; }).join('').toUpperCase(); }
 
   // ---------- relatório semanal ----------
   function renderWeekTable(){
