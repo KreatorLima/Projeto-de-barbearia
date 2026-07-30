@@ -49,12 +49,21 @@ class DashboardController extends Controller
         $metaMensal = Setting::first()->monthly_goal;
 
         $agendamentosSemana = Scheduling::whereBetween('date', [
-            now()->startOfWeek(),
-            now()->endOfWeek()
+            now()->startOfWeek(\Carbon\Carbon::MONDAY),
+            now()->startOfWeek(\Carbon\Carbon::MONDAY)->copy()->addDays(5)
         ])
+        ->where('status', 'Concluído')
         ->selectRaw('DATE(date) as dia, COUNT(*) as total')
         ->groupBy('dia')
-        ->orderBy('dia')
+        ->get();
+
+        $faturamentoSemana = Scheduling::whereBetween('date', [
+            now()->startOfWeek(\Carbon\Carbon::MONDAY),
+            now()->startOfWeek(\Carbon\Carbon::MONDAY)->copy()->addDays(5)
+        ])
+        ->where('status', 'Concluído')
+        ->selectRaw('DATE(date) as dia, SUM(price) as total')
+        ->groupBy('dia')
         ->get();
 
         $diasSemana = collect();
@@ -64,7 +73,16 @@ class DashboardController extends Controller
 
             $diasSemana->push([
                 'dia' => $data,
-                'total' => $agendamentosSemana->firstWhere('dia', $data->format('Y-m-d'))->total ?? 0
+
+                // quantidade de agendamentos
+                'total' => $agendamentosSemana
+                    ->firstWhere('dia', $data->format('Y-m-d'))
+                    ->total ?? 0,
+
+                // valor arrecadado no dia
+                'faturamento' => $faturamentoSemana
+                    ->firstWhere('dia', $data->format('Y-m-d'))
+                    ->total ?? 0,
             ]);
         }
 
@@ -83,7 +101,8 @@ class DashboardController extends Controller
             'barbeirosTotal',
             'metaMensal',
             'agendamentosSemana',
-            'diasSemana'
+            'diasSemana',
+            'faturamentoSemana'
         ));
     }
 

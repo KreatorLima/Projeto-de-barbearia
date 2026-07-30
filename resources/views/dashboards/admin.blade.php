@@ -127,7 +127,7 @@
         <span id="activeCount" class="block font-display text-3xl mt-2">{{ $barbeirosAtivos }} <span class="text-base text-ink-dim dark:text-ink-dim-dark font-sans">/ <span id="totalCount">{{ $barbeirosTotal ?? 0 }}</span></span></span>
       </div>
 
-      <div class="bg-card dark:bg-card-dark border border-line dark:border-line-dark rounded-xl p-5">
+      <div class="lg:col-span-2 bg-card dark:bg-card-dark border border-line dark:border-line-dark rounded-xl p-5">
         <div class="flex items-center justify-between gap-2">
           <span class="font-mono text-[11px] tracking-[0.1em] uppercase text-ink-dim dark:text-ink-dim-dark flex items-center gap-1.5"><i class="ti ti-target-arrow"></i> Meta mensal</span>
           <button type="button" id="openMetaModalBtn" title="Editar meta mensal"
@@ -137,9 +137,21 @@
             </svg>
           </button>
         </div>
-        <span class="block font-display text-3xl mt-2 text-brass dark:text-brass-dark">400 <span class="text-base text-ink-dim dark:text-ink-dim-dark font-sans">cortes</span></span>
+        <span class="block font-display text-3xl mt-2 text-brass dark:text-brass-dark">{{ $metaMensal }} <span class="text-base text-ink-dim dark:text-ink-dim-dark font-sans">cortes</span></span>
       </div>
+
+      
+      <button type="button" id="openBarberModalBtn" title="Cadastrar novo barbeiro"
+        class="group lg:col-span-2 bg-card dark:bg-card-dark border border-dashed border-line dark:border-line-dark hover:border-brass dark:hover:border-brass-dark hover:bg-brass/[0.04] dark:hover:bg-brass-dark/[0.06] rounded-xl p-5 flex flex-row items-center justify-center gap-3 transition-colors duration-200">
+        <span class="w-10 h-10 rounded-full bg-brass/10 dark:bg-brass-dark/15 text-brass dark:text-brass-dark group-hover:bg-brass group-hover:text-white dark:group-hover:bg-brass-dark dark:group-hover:text-surface-dark group-hover:scale-110 group-hover:shadow-md group-hover:shadow-brass/30 flex items-center justify-center shrink-0 transition-all duration-200">
+          <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14m-7 7V5"/>
+          </svg>
+        </span>
+        <span class="font-mono text-[11px] tracking-[0.1em] uppercase text-ink-dim dark:text-ink-dim-dark group-hover:text-brass dark:group-hover:text-brass-dark transition-colors">Cadastrar barbeiro</span>
+      </button>
     </div>
+
 
     <!-- meta mensal da loja -->
     <div class="mt-4 bg-card dark:bg-card-dark border border-line dark:border-line-dark rounded-xl p-5">
@@ -180,15 +192,15 @@
               <tr>
                   <td class="px-4 py-3">{{ ucfirst($dia['dia']->translatedFormat('l')) }}</td>
                   <td class="px-4 py-3 text-right">{{ $dia['total'] }}</td>
-                  <td class="px-4 py-3 text-right">R$ 0,00</td>
+                  <td class="px-4 py-3 text-right">R$ {{ number_format($dia['faturamento'], 2, ',', '.') }}</td>
               </tr>
               @endforeach
           </tbody>
           <tfoot>
             <tr class="border-t border-line dark:border-line-dark font-medium">
               <td class="px-4 py-3">Total</td>
-              <td id="weekTotalCuts" class="px-4 py-3 text-right font-mono text-brass dark:text-brass-dark">—</td>
-              <td id="weekTotalRevenue" class="px-4 py-3 text-right font-mono text-brass dark:text-brass-dark">—</td>
+              <td id="weekTotalCuts" class="px-4 py-3 text-right font-mono text-brass dark:text-brass-dark">{{ $diasSemana->sum('total') }}</td>
+              <td id="weekTotalRevenue" class="px-4 py-3 text-right font-mono text-brass dark:text-brass-dark">R$ {{ number_format($diasSemana->sum('faturamento'), 2, ',', '.') }}</td>
             </tr>
           </tfoot>
         </table>
@@ -208,70 +220,6 @@
         </thead>
         <tbody id="rankingBody" class="divide-y divide-line dark:divide-line-dark"></tbody>
       </table>
-    </div>
-  </section>
-
-  <!-- ================= CADASTRAR NOVO BARBEIRO ================= -->
-  <section data-reveal>
-    <div class="flex items-baseline gap-3 mb-6">
-      <h2 class="text-xl font-semibold">Cadastrar novo barbeiro</h2>
-    </div>
-
-    <form id="barberForm" class="border border-line dark:border-line-dark rounded-xl p-6">
-      <div class="grid sm:grid-cols-2 gap-4">
-        <div>
-          <label for="barberName" class="block text-[13px] text-ink-dim dark:text-ink-dim-dark mb-1.5">Nome completo</label>
-          <input type="text" id="barberName" required placeholder="Nome do barbeiro"
-            class="w-full bg-transparent border border-line dark:border-line-dark rounded-lg px-4 py-3 text-sm outline-none focus:border-brass dark:focus:border-brass-dark transition-colors">
-        </div>
-        <div>
-          <label for="barberRole" class="block text-[13px] text-ink-dim dark:text-ink-dim-dark mb-1.5">Cargo / especialidade</label>
-          <input type="text" id="barberRole" placeholder="Ex: Barbeiro, Barbeiro-chefe"
-            class="w-full bg-transparent border border-line dark:border-line-dark rounded-lg px-4 py-3 text-sm outline-none focus:border-brass dark:focus:border-brass-dark transition-colors">
-        </div>
-        <div>
-          <label for="barberEmail" class="block text-[13px] text-ink-dim dark:text-ink-dim-dark mb-1.5">E-mail de acesso</label>
-          <input type="email" id="barberEmail" required placeholder="email@alamedabarbearia.com.br"
-            class="w-full bg-transparent border border-line dark:border-line-dark rounded-lg px-4 py-3 text-sm outline-none focus:border-brass dark:focus:border-brass-dark transition-colors">
-        </div>
-        <div>
-          <label for="barberPhone" class="block text-[13px] text-ink-dim dark:text-ink-dim-dark mb-1.5">WhatsApp</label>
-          <input type="tel" id="barberPhone" required placeholder="(15) 99999-9999"
-            class="w-full bg-transparent border border-line dark:border-line-dark rounded-lg px-4 py-3 text-sm outline-none focus:border-brass dark:focus:border-brass-dark transition-colors">
-        </div>
-        <div>
-          <label for="barberPassword" class="block text-[13px] text-ink-dim dark:text-ink-dim-dark mb-1.5">Senha provisória</label>
-          <input type="password" id="barberPassword" required minlength="8" placeholder="Mínimo 8 caracteres"
-            class="w-full bg-transparent border border-line dark:border-line-dark rounded-lg px-4 py-3 text-sm outline-none focus:border-brass dark:focus:border-brass-dark transition-colors">
-        </div>
-        <div>
-          <label for="barberPasswordConfirm" class="block text-[13px] text-ink-dim dark:text-ink-dim-dark mb-1.5">Confirmar senha</label>
-          <input type="password" id="barberPasswordConfirm" required minlength="8"
-            class="w-full bg-transparent border border-line dark:border-line-dark rounded-lg px-4 py-3 text-sm outline-none focus:border-brass dark:focus:border-brass-dark transition-colors">
-        </div>
-        <div class="sm:col-span-2">
-          <label for="barberSpecialties" class="block text-[13px] text-ink-dim dark:text-ink-dim-dark mb-1.5">Especialidades <span class="text-ink-dim/60 dark:text-ink-dim-dark/60">(separadas por vírgula)</span></label>
-          <input type="text" id="barberSpecialties" placeholder="Ex: Navalha, Degradê, Platinado"
-            class="w-full bg-transparent border border-line dark:border-line-dark rounded-lg px-4 py-3 text-sm outline-none focus:border-brass dark:focus:border-brass-dark transition-colors">
-        </div>
-      </div>
-
-      <div id="formError" class="hidden mt-3 text-[13px] text-brick dark:text-brick-dark font-mono">As senhas não coincidem.</div>
-
-      <div class="flex items-center justify-between flex-wrap gap-3 mt-6">
-        <label class="flex items-center gap-2 text-[13px] text-ink-dim dark:text-ink-dim-dark cursor-pointer">
-          <input type="checkbox" id="barberActive" checked class="rounded border-line dark:border-line-dark text-brass focus:ring-brass">
-          Ativar barbeiro imediatamente
-        </label>
-        <button type="submit"
-          class="font-mono text-[13px] tracking-wide bg-brass dark:bg-brass-dark text-white dark:text-surface-dark px-6 py-3.5 rounded transition-all duration-150 hover:opacity-90 hover:-translate-y-0.5 active:translate-y-0">
-          Cadastrar barbeiro
-        </button>
-      </div>
-    </form>
-
-    <div id="formSuccess" class="hidden mt-4 border border-brass-dim dark:border-brass-dim-dark rounded-lg px-4 py-3 text-[13px] text-brass dark:text-brass-dark bg-surface-2 dark:bg-surface-2-dark">
-      <i class="ti ti-circle-check mr-1"></i> Barbeiro adicionado à lista abaixo — isso é só uma visualização, ainda não está salvo no banco.
     </div>
   </section>
 
@@ -337,6 +285,82 @@
   </div>
 </div>
 
+<div id="barberModalOverlay" class="hidden fixed inset-0 z-[60] bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+  <div class="w-full max-w-xl bg-card dark:bg-card-dark border border-line dark:border-line-dark rounded-xl p-6 relative my-8">
+    <button type="button" id="closeBarberModalBtn" aria-label="Fechar"
+      class="absolute top-4 right-4 w-8 h-8 rounded border border-line dark:border-line-dark text-ink-dim dark:text-ink-dim-dark hover:border-brass-dim hover:text-brass dark:hover:text-brass-dark flex items-center justify-center transition-colors">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M14 8v-2a2 2 0 0 0 -2 -2h-7a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2 -2v-2" />
+        <path d="M9 12h12l-3 -3" />
+        <path d="M18 15l3 -3" />
+      </svg>
+    </button>
+ 
+    <span class="font-mono text-xs tracking-[0.14em] uppercase text-brass dark:text-brass-dark flex items-center gap-1.5"><i class="ti ti-user-plus"></i> Equipe</span>
+    <h2 class="font-display uppercase text-xl mt-1 mb-5">Cadastrar novo barbeiro</h2>
+ 
+    <form id="barberForm">
+      <div class="grid sm:grid-cols-2 gap-4">
+        <div>
+          <label for="barberName" class="block text-[13px] text-ink-dim dark:text-ink-dim-dark mb-1.5">Nome completo</label>
+          <input type="text" id="barberName" required placeholder="Nome do barbeiro"
+            class="w-full bg-transparent border border-line dark:border-line-dark rounded-lg px-4 py-3 text-sm outline-none focus:border-brass dark:focus:border-brass-dark transition-colors">
+        </div>
+        <div>
+          <label for="barberRole" class="block text-[13px] text-ink-dim dark:text-ink-dim-dark mb-1.5">Cargo / especialidade</label>
+          <input type="text" id="barberRole" placeholder="Ex: Barbeiro, Barbeiro-chefe"
+            class="w-full bg-transparent border border-line dark:border-line-dark rounded-lg px-4 py-3 text-sm outline-none focus:border-brass dark:focus:border-brass-dark transition-colors">
+        </div>
+        <div>
+          <label for="barberEmail" class="block text-[13px] text-ink-dim dark:text-ink-dim-dark mb-1.5">E-mail de acesso</label>
+          <input type="email" id="barberEmail" required placeholder="email@alamedabarbearia.com.br"
+            class="w-full bg-transparent border border-line dark:border-line-dark rounded-lg px-4 py-3 text-sm outline-none focus:border-brass dark:focus:border-brass-dark transition-colors">
+        </div>
+        <div>
+          <label for="barberPhone" class="block text-[13px] text-ink-dim dark:text-ink-dim-dark mb-1.5">WhatsApp</label>
+          <input type="tel" id="barberPhone" required placeholder="(15) 99999-9999"
+            class="w-full bg-transparent border border-line dark:border-line-dark rounded-lg px-4 py-3 text-sm outline-none focus:border-brass dark:focus:border-brass-dark transition-colors">
+        </div>
+        <div>
+          <label for="barberPassword" class="block text-[13px] text-ink-dim dark:text-ink-dim-dark mb-1.5">Senha provisória</label>
+          <input type="password" id="barberPassword" required minlength="8" placeholder="Mínimo 8 caracteres"
+            class="w-full bg-transparent border border-line dark:border-line-dark rounded-lg px-4 py-3 text-sm outline-none focus:border-brass dark:focus:border-brass-dark transition-colors">
+        </div>
+        <div>
+          <label for="barberPasswordConfirm" class="block text-[13px] text-ink-dim dark:text-ink-dim-dark mb-1.5">Confirmar senha</label>
+          <input type="password" id="barberPasswordConfirm" required minlength="8"
+            class="w-full bg-transparent border border-line dark:border-line-dark rounded-lg px-4 py-3 text-sm outline-none focus:border-brass dark:focus:border-brass-dark transition-colors">
+        </div>
+        <div class="sm:col-span-2">
+          <label for="barberSpecialties" class="block text-[13px] text-ink-dim dark:text-ink-dim-dark mb-1.5">Especialidades <span class="text-ink-dim/60 dark:text-ink-dim-dark/60">(separadas por vírgula)</span></label>
+          <input type="text" id="barberSpecialties" placeholder="Ex: Navalha, Degradê, Platinado"
+            class="w-full bg-transparent border border-line dark:border-line-dark rounded-lg px-4 py-3 text-sm outline-none focus:border-brass dark:focus:border-brass-dark transition-colors">
+        </div>
+      </div>
+ 
+      <div id="formError" class="hidden mt-3 text-[13px] text-brick dark:text-brick-dark font-mono">As senhas não coincidem.</div>
+ 
+      <div class="flex items-center justify-between flex-wrap gap-3 mt-6">
+        <label class="flex items-center gap-2 text-[13px] text-ink-dim dark:text-ink-dim-dark cursor-pointer">
+          <input type="checkbox" id="barberActive" checked class="rounded border-line dark:border-line-dark text-brass focus:ring-brass">
+          Ativar barbeiro imediatamente
+        </label>
+        <div class="flex items-center gap-3">
+          <button type="button" id="cancelBarberModalBtn"
+            class="font-mono text-[13px] tracking-wide px-5 py-3 rounded border border-line dark:border-line-dark text-ink-dim dark:text-ink-dim-dark hover:border-brass-dim hover:text-brass dark:hover:text-brass-dark transition-colors">
+            Cancelar
+          </button>
+          <button type="submit"
+            class="font-mono text-[13px] tracking-wide bg-brass dark:bg-brass-dark text-white dark:text-surface-dark px-6 py-3.5 rounded transition-all duration-150 hover:opacity-90 hover:-translate-y-0.5 active:translate-y-0">
+            Cadastrar barbeiro
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
 <footer class="border-t border-line dark:border-line-dark py-6 mt-4">
   <div class="max-w-[1120px] mx-auto px-8 flex flex-wrap justify-between items-center gap-3 text-xs text-ink-dim dark:text-ink-dim-dark">
     <span>© 2026 Alameda Barbearia</span>
@@ -384,6 +408,42 @@
     });
   }, { threshold: 0.15 });
   revealEls.forEach(function(el, i){ el.style.transitionDelay = (i * 80) + 'ms'; io.observe(el); });
+
+    // ---------- modal: cadastrar barbeiro ----------
+  var barberModalOverlay = document.getElementById('barberModalOverlay');
+  function openBarberModal(){
+    barberModalOverlay.classList.remove('hidden');
+    document.getElementById('barberName').focus();
+  }
+  function closeBarberModal(){
+    barberModalOverlay.classList.add('hidden');
+  }
+  document.getElementById('openBarberModalBtn').addEventListener('click', openBarberModal);
+  document.getElementById('closeBarberModalBtn').addEventListener('click', closeBarberModal);
+  document.getElementById('cancelBarberModalBtn').addEventListener('click', closeBarberModal);
+  barberModalOverlay.addEventListener('click', function(e){
+    if (e.target === barberModalOverlay) closeBarberModal();
+  });
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape' && !barberModalOverlay.classList.contains('hidden')) closeBarberModal();
+  });
+ 
+  var revealEls = document.querySelectorAll('[data-reveal]');
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if (entry.isIntersecting){ entry.target.classList.add('in-view'); io.unobserve(entry.target); }
+    });
+  }, { threshold: 0.15 });
+  revealEls.forEach(function(el, i){ el.style.transitionDelay = (i * 80) + 'ms'; io.observe(el); });
+ 
+  var revealEls = document.querySelectorAll('[data-reveal]');
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if (entry.isIntersecting){ entry.target.classList.add('in-view'); io.unobserve(entry.target); }
+    });
+  }, { threshold: 0.15 });
+  revealEls.forEach(function(el, i){ el.style.transitionDelay = (i * 80) + 'ms'; io.observe(el); });
+
 
   // ---------- relatório semanal ----------
   function renderWeekTable(){
