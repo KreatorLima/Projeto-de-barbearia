@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Scheduling;
 use App\Models\User;
+use App\Models\Setting;
 
 class DashboardController extends Controller
 {
@@ -44,7 +45,8 @@ class DashboardController extends Controller
         $agendamentos = Scheduling::whereDate('date', today())->get();
         $agendamentosConcluidos = Scheduling::whereDate('date', today())->where('status', 'concluido')->get();
         $semana = Scheduling::whereBetween('date', [now()->startOfWeek(), now()->endOfWeek()])->where('status', 'concluido')->get();
-        $agendamentosMensais = Scheduling::whereMonth('date', now()->month)->get(); // Agendamentos do mês atual
+        $agendamentosMensais = Scheduling::whereMonth('date', now()->month)->get();
+        $metaMensal = Setting::first()->monthly_goal;
 
         $barbeirosAtivos = User::where('role', 'manager')
             ->where('last_activity', '>=', now()->subMinutes(5))
@@ -58,7 +60,23 @@ class DashboardController extends Controller
             'agendamentosConcluidos',
             'semana',
             'barbeirosAtivos',
-            'barbeirosTotal'
+            'barbeirosTotal',
+            'metaMensal'
         ));
+    }
+
+    public function updateMeta(Request $request)
+    {
+        $request->validate([
+            'meta_mensal' => 'required|integer|min:1'
+        ]);
+
+        $setting = Setting::first();
+
+        $setting->update([
+            'monthly_goal' => $request->meta_mensal
+        ]);
+
+        return back()->with('success', 'Meta atualizada!');
     }
 }

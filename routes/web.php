@@ -39,5 +39,8 @@ Route::post('/agendamento', [SchedulingController::class, 'store'])->name('agend
 
 Route::post('/agendamentos/{id}/status', [SchedulingController::class, 'updateStatus'])
     ->name('scheduling.updateStatus');
+
+Route::post('/admin/meta', [DashboardController::class, 'updateMeta'])
+    ->name('admin.updateMeta');
     
 require __DIR__.'/auth.php';

@@ -111,17 +111,33 @@
             {{ $agendamentos->where('date', now()->toDateString())->count() }}
         </span>
       </div>
+
       <div class="bg-card dark:bg-card-dark border border-line dark:border-line-dark rounded-xl p-5">
         <span class="font-mono text-[11px] tracking-[0.1em] uppercase text-ink-dim dark:text-ink-dim-dark flex items-center gap-1.5"><i class="ti ti-cash"></i> Faturamento hoje</span>
         <span class="block font-display text-3xl mt-2 text-brass dark:text-brass-dark">R$ {{ number_format($agendamentosConcluidos->sum('price') ?: $agendamentosConcluidos->count(), 2, ',', '.') }}</span>
       </div>
+      
       <div class="bg-card dark:bg-card-dark border border-line dark:border-line-dark rounded-xl p-5">
         <span class="font-mono text-[11px] tracking-[0.1em] uppercase text-ink-dim dark:text-ink-dim-dark flex items-center gap-1.5"><i class="ti ti-calendar-week"></i> Faturamento da semana</span>
         <span class="block font-display text-3xl mt-2 text-brass dark:text-brass-dark">R$ {{ number_format($semana->sum('price') ?: $semana->count() * 50, 2, ',', '.') }}</span>
       </div>
+
       <div class="bg-card dark:bg-card-dark border border-line dark:border-line-dark rounded-xl p-5">
         <span class="font-mono text-[11px] tracking-[0.1em] uppercase text-ink-dim dark:text-ink-dim-dark flex items-center gap-1.5"><i class="ti ti-users"></i> Barbeiros ativos</span>
         <span id="activeCount" class="block font-display text-3xl mt-2">{{ $barbeirosAtivos }} <span class="text-base text-ink-dim dark:text-ink-dim-dark font-sans">/ <span id="totalCount">{{ $barbeirosTotal ?? 0 }}</span></span></span>
+      </div>
+
+      <div class="bg-card dark:bg-card-dark border border-line dark:border-line-dark rounded-xl p-5">
+        <div class="flex items-center justify-between gap-2">
+          <span class="font-mono text-[11px] tracking-[0.1em] uppercase text-ink-dim dark:text-ink-dim-dark flex items-center gap-1.5"><i class="ti ti-target-arrow"></i> Meta mensal</span>
+          <button type="button" id="openMetaModalBtn" title="Editar meta mensal"
+            class="shrink-0 inline-flex items-center justify-center w-8 h-8 rounded-full bg-brass/10 dark:bg-brass-dark/15 text-brass dark:text-brass-dark hover:bg-brass hover:text-white dark:hover:bg-brass-dark dark:hover:text-surface-dark hover:scale-110 hover:shadow-md hover:shadow-brass/30 active:scale-95 transition-all duration-200">
+            <svg class="w-6 h-6 text-#a39c93 dark:#a39c93" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m14.304 4.844 2.852 2.852M7 7H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-4.5m2.409-9.91a2.017 2.017 0 0 1 0 2.853l-6.844 6.844L8 14l.713-3.565 6.844-6.844a2.015 2.015 0 0 1 2.852 0Z"/>
+            </svg>
+          </button>
+        </div>
+        <span class="block font-display text-3xl mt-2 text-brass dark:text-brass-dark">400 <span class="text-base text-ink-dim dark:text-ink-dim-dark font-sans">cortes</span></span>
       </div>
     </div>
 
@@ -129,12 +145,12 @@
     <div class="mt-4 bg-card dark:bg-card-dark border border-line dark:border-line-dark rounded-xl p-5">
       <div class="flex items-center justify-between mb-2.5 flex-wrap gap-1">
         <span class="font-mono text-[11px] tracking-[0.1em] uppercase text-ink-dim dark:text-ink-dim-dark flex items-center gap-1.5"><i class="ti ti-target-arrow"></i> Meta do mês (todos os barbeiros)</span>
-        <span class="text-[13px] font-medium">{{ $agendamentosMensais->count() }} / 400 cortes</span>
+        <span class="text-[13px] font-medium">{{ $agendamentosMensais->count() }} / {{ $metaMensal }} cortes</span>
       </div>
       <div class="h-2.5 w-full rounded-full bg-surface-2 dark:bg-surface-2-dark overflow-hidden">
-        <div id="goalBar" class="h-full rounded-full bg-brass dark:bg-brass-dark" style="width: {{ min(100, ($agendamentosMensais->count() / 400) * 100) }}%" data-target="67"></div>
+        <div id="goalBar" class="h-full rounded-full bg-brass dark:bg-brass-dark" style="width: {{ min(100, ($agendamentosMensais->count() / $metaMensal) * 100) }}%" data-target="67"></div>
       </div>
-      <p class="text-[13px] text-ink-dim dark:text-ink-dim-dark mt-2.5">Faltam 132 cortes para bater a meta do mês.</p>
+      <p class="text-[13px] text-ink-dim dark:text-ink-dim-dark mt-2.5">Faltam {{ max(0, $metaMensal - $agendamentosMensais->count()) }} cortes para bater a meta do mês.</p>
     </div>
   </section>
 
@@ -276,6 +292,43 @@
 
 </main>
 
+<div id="metaModalOverlay" class="hidden fixed inset-0 z-[60] bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+  <div class="w-full max-w-sm bg-card dark:bg-card-dark border border-line dark:border-line-dark rounded-xl p-6 relative">
+    <button type="button" id="closeMetaModalBtn" aria-label="Fechar"
+      class="absolute top-4 right-4 w-8 h-8 rounded border border-line dark:border-line-dark text-ink-dim dark:text-ink-dim-dark hover:border-brass-dim hover:text-brass dark:hover:text-brass-dark flex items-center justify-center transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 8v-2a2 2 0 0 0 -2 -2h-7a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2 -2v-2" />
+            <path d="M9 12h12l-3 -3" />
+            <path d="M18 15l3 -3" />
+          </svg>
+    </button>
+ 
+    <span class="font-mono text-xs tracking-[0.14em] uppercase text-brass dark:text-brass-dark flex items-center gap-1.5"><i class="ti ti-target-arrow"></i> Meta mensal</span>
+    <h2 class="font-display uppercase text-xl mt-1 mb-5">Editar meta de cortes</h2>
+ 
+    <form method="POST" action="{{ route('admin.updateMeta') }}">
+      @csrf
+      
+      <label for="metaMensalInput" class="block text-[13px] text-ink-dim dark:text-ink-dim-dark mb-1.5">Cortes necessários no mês (toda a equipe)</label>
+      <input type="number" name="meta_mensal" id="metaMensalInput" min="1" step="1" required
+        value="{{ $metaMensal }}"
+        class="w-full bg-transparent border border-line dark:border-line-dark rounded-lg px-4 py-3 text-sm font-mono outline-none focus:border-brass dark:focus:border-brass-dark transition-colors">
+ 
+      <div class="flex items-center justify-end gap-3 mt-6">
+        <button type="button" id="cancelMetaModalBtn"
+          class="font-mono text-[13px] tracking-wide px-5 py-3 rounded border border-line dark:border-line-dark text-ink-dim dark:text-ink-dim-dark hover:border-brass-dim hover:text-brass dark:hover:text-brass-dark transition-colors">
+          Cancelar
+        </button>
+        <button type="submit"
+          class="font-mono text-[13px] tracking-wide bg-brass dark:bg-brass-dark text-white dark:text-surface-dark px-6 py-3 rounded transition-all duration-150 hover:opacity-90 hover:-translate-y-0.5 active:translate-y-0">
+          Salvar meta
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
 <footer class="border-t border-line dark:border-line-dark py-6 mt-4">
   <div class="max-w-[1120px] mx-auto px-8 flex flex-wrap justify-between items-center gap-3 text-xs text-ink-dim dark:text-ink-dim-dark">
     <span>© 2026 Alameda Barbearia</span>
@@ -288,6 +341,33 @@
     document.documentElement.classList.toggle('dark');
     renderChart();
   });
+
+  // ---------- modal: editar meta mensal ----------
+  var metaModalOverlay = document.getElementById('metaModalOverlay');
+  function openMetaModal(){
+    metaModalOverlay.classList.remove('hidden');
+    document.getElementById('metaMensalInput').focus();
+  }
+  function closeMetaModal(){
+    metaModalOverlay.classList.add('hidden');
+  }
+  document.getElementById('openMetaModalBtn').addEventListener('click', openMetaModal);
+  document.getElementById('closeMetaModalBtn').addEventListener('click', closeMetaModal);
+  document.getElementById('cancelMetaModalBtn').addEventListener('click', closeMetaModal);
+  metaModalOverlay.addEventListener('click', function(e){
+    if (e.target === metaModalOverlay) closeMetaModal();
+  });
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape' && !metaModalOverlay.classList.contains('hidden')) closeMetaModal();
+  });
+ 
+  var revealEls = document.querySelectorAll('[data-reveal]');
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if (entry.isIntersecting){ entry.target.classList.add('in-view'); io.unobserve(entry.target); }
+    });
+  }, { threshold: 0.15 });
+  revealEls.forEach(function(el, i){ el.style.transitionDelay = (i * 80) + 'ms'; io.observe(el); });
 
   var revealEls = document.querySelectorAll('[data-reveal]');
   var io = new IntersectionObserver(function(entries){
