@@ -300,50 +300,49 @@
     <span class="font-mono text-xs tracking-[0.14em] uppercase text-brass dark:text-brass-dark flex items-center gap-1.5"><i class="ti ti-user-plus"></i> Equipe</span>
     <h2 class="font-display uppercase text-xl mt-1 mb-5">Cadastrar novo barbeiro</h2>
  
-    <form id="barberForm">
+    <form method="POST" action="{{ route('admin.barbers.store') }}">
+      @csrf
       <div class="grid sm:grid-cols-2 gap-4">
         <div>
           <label for="barberName" class="block text-[13px] text-ink-dim dark:text-ink-dim-dark mb-1.5">Nome completo</label>
-          <input type="text" id="barberName" required placeholder="Nome do barbeiro"
+          <input type="text" name="nome" id="barberName" required placeholder="Nome do barbeiro"
             class="w-full bg-transparent border border-line dark:border-line-dark rounded-lg px-4 py-3 text-sm outline-none focus:border-brass dark:focus:border-brass-dark transition-colors">
         </div>
         <div>
           <label for="barberRole" class="block text-[13px] text-ink-dim dark:text-ink-dim-dark mb-1.5">Cargo / especialidade</label>
-          <input type="text" id="barberRole" placeholder="Ex: Barbeiro, Barbeiro-chefe"
+          <input type="text" name="cargo" id="barberRole" placeholder="Ex: Barbeiro, Barbeiro-chefe"
             class="w-full bg-transparent border border-line dark:border-line-dark rounded-lg px-4 py-3 text-sm outline-none focus:border-brass dark:focus:border-brass-dark transition-colors">
         </div>
         <div>
           <label for="barberEmail" class="block text-[13px] text-ink-dim dark:text-ink-dim-dark mb-1.5">E-mail de acesso</label>
-          <input type="email" id="barberEmail" required placeholder="email@alamedabarbearia.com.br"
+          <input type="email" name="email" id="barberEmail" required placeholder="email@alamedabarbearia.com.br"
             class="w-full bg-transparent border border-line dark:border-line-dark rounded-lg px-4 py-3 text-sm outline-none focus:border-brass dark:focus:border-brass-dark transition-colors">
         </div>
         <div>
           <label for="barberPhone" class="block text-[13px] text-ink-dim dark:text-ink-dim-dark mb-1.5">WhatsApp</label>
-          <input type="tel" id="barberPhone" required placeholder="(15) 99999-9999"
+          <input type="tel" name="whatsapp" id="barberPhone" required placeholder="(15) 99999-9999"
             class="w-full bg-transparent border border-line dark:border-line-dark rounded-lg px-4 py-3 text-sm outline-none focus:border-brass dark:focus:border-brass-dark transition-colors">
         </div>
         <div>
           <label for="barberPassword" class="block text-[13px] text-ink-dim dark:text-ink-dim-dark mb-1.5">Senha provisória</label>
-          <input type="password" id="barberPassword" required minlength="8" placeholder="Mínimo 8 caracteres"
+          <input type="password" name="senha" id="barberPassword" required minlength="8" placeholder="Mínimo 8 caracteres"
             class="w-full bg-transparent border border-line dark:border-line-dark rounded-lg px-4 py-3 text-sm outline-none focus:border-brass dark:focus:border-brass-dark transition-colors">
         </div>
         <div>
           <label for="barberPasswordConfirm" class="block text-[13px] text-ink-dim dark:text-ink-dim-dark mb-1.5">Confirmar senha</label>
-          <input type="password" id="barberPasswordConfirm" required minlength="8"
+          <input type="password" name="senha_confirmation" id="barberPasswordConfirm" required minlength="8"
             class="w-full bg-transparent border border-line dark:border-line-dark rounded-lg px-4 py-3 text-sm outline-none focus:border-brass dark:focus:border-brass-dark transition-colors">
         </div>
         <div class="sm:col-span-2">
           <label for="barberSpecialties" class="block text-[13px] text-ink-dim dark:text-ink-dim-dark mb-1.5">Especialidades <span class="text-ink-dim/60 dark:text-ink-dim-dark/60">(separadas por vírgula)</span></label>
-          <input type="text" id="barberSpecialties" placeholder="Ex: Navalha, Degradê, Platinado"
+          <input type="text" name="especialidades" id="barberSpecialties" placeholder="Ex: Navalha, Degradê, Platinado"
             class="w-full bg-transparent border border-line dark:border-line-dark rounded-lg px-4 py-3 text-sm outline-none focus:border-brass dark:focus:border-brass-dark transition-colors">
         </div>
       </div>
- 
-      <div id="formError" class="hidden mt-3 text-[13px] text-brick dark:text-brick-dark font-mono">As senhas não coincidem.</div>
- 
+
       <div class="flex items-center justify-between flex-wrap gap-3 mt-6">
         <label class="flex items-center gap-2 text-[13px] text-ink-dim dark:text-ink-dim-dark cursor-pointer">
-          <input type="checkbox" id="barberActive" checked class="rounded border-line dark:border-line-dark text-brass focus:ring-brass">
+          <input type="checkbox" name="ativo" value="1" id="barberActive" checked class="rounded border-line dark:border-line-dark text-brass focus:ring-brass">
           Ativar barbeiro imediatamente
         </label>
         <div class="flex items-center gap-3">

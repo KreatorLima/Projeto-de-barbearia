@@ -28,19 +28,22 @@ Route::middleware(['auth', 'last.activity'])->group(function () {
         Route::get('/manager/dashboard', [DashboardController::class, 'managerIndex'])->name('manager.dashboard');
     });
 
-    // Dashboard do Admin
+    // Dashboard e Ações do Admin
     Route::middleware(['role:admin'])->group(function () {
         Route::get('/admin/dashboard', [DashboardController::class, 'adminIndex'])->name('admin.dashboard');
+        
+        // Atualizar Meta Mensal
+        Route::post('/admin/meta', [DashboardController::class, 'updateMeta'])->name('admin.updateMeta');
+        
+        // Cadastrar Novo Barbeiro
+        Route::post('/admin/barbeiros', [DashboardController::class, 'store'])->name('admin.barbers.store');
     });
 });
 
+// Agendamentos
 Route::get('/agendamento', [SchedulingController::class, 'index'])->name('scheduling.index');
 Route::post('/agendamento', [SchedulingController::class, 'store'])->name('agendamentos.store');
-
 Route::post('/agendamentos/{id}/status', [SchedulingController::class, 'updateStatus'])
     ->name('scheduling.updateStatus');
 
-Route::post('/admin/meta', [DashboardController::class, 'updateMeta'])
-    ->name('admin.updateMeta');
-    
 require __DIR__.'/auth.php';

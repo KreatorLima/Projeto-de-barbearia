@@ -1,10 +1,13 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use Illuminate\Http\Request;
 use App\Models\Scheduling;
 use App\Models\User;
 use App\Models\Setting;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash; 
 
 class DashboardController extends Controller
 {
@@ -41,12 +44,11 @@ class DashboardController extends Controller
 
     public function adminIndex()
     {
-
         $agendamentos = Scheduling::whereDate('date', today())->get();
         $agendamentosConcluidos = Scheduling::whereDate('date', today())->where('status', 'concluido')->get();
         $semana = Scheduling::whereBetween('date', [now()->startOfWeek(), now()->endOfWeek()])->where('status', 'concluido')->get();
         $agendamentosMensais = Scheduling::whereMonth('date', now()->month)->get();
-        $metaMensal = Setting::first()->monthly_goal;
+        $metaMensal = Setting::first()->monthly_goal ?? 100;
 
         $agendamentosSemana = Scheduling::whereBetween('date', [
             now()->startOfWeek(\Carbon\Carbon::MONDAY),
@@ -114,10 +116,47 @@ class DashboardController extends Controller
 
         $setting = Setting::first();
 
-        $setting->update([
-            'monthly_goal' => $request->meta_mensal
-        ]);
+        if ($setting) {
+            $setting->update([
+                'monthly_goal' => $request->meta_mensal
+            ]);
+        }
 
         return back()->with('success', 'Meta atualizada!');
+    }
+
+    public function store(Request $request)
+    {
+        // 1. Validação dos dados
+        $request->validate([
+            'nome' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'senha' => 'required|min:8|confirmed',
+            'cargo' => 'nullable|string',
+            'whatsapp' => 'nullable|string',
+            'especialidades' => 'nullable|string',
+        ]);
+
+        // 2. Usar Transaction para garantir integridade
+        DB::transaction(function () use ($request) {
+            
+            // Cadastra o usuário no sistema como 'manager' (Barbeiro)
+            $user = User::create([
+                'name' => $request->nome,
+                'email' => $request->email,
+                'password' => Hash::make($request->senha),
+                'role' => 'manager', // Mantido no padrão 'manager' conforme seu projeto
+            ]);
+
+            // Cadastra os detalhes complementares na tabela barbers
+            $user->barber()->create([
+                'cargo' => $request->cargo,
+                'whatsapp' => $request->whatsapp,
+                'especialidades' => $request->especialidades,
+                'ativo' => $request->has('ativo'),
+            ]);
+        });
+
+        return redirect()->back()->with('success', 'Barbeiro cadastrado com sucesso!');
     }
 }

@@ -48,4 +48,9 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function barber()
+    {
+        return $this->hasOne(Barber::class);
+    }
 }
