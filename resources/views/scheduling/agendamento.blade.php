@@ -263,35 +263,30 @@
             </label>
           </div>
 
-          <div class="pick-card">
-            <input type="radio" name="barber" id="brb-1" value="Diego Alves" class="peer hidden">
-            <label for="brb-1" class="relative flex flex-col items-center text-center gap-2 border border-line dark:border-line-dark rounded-lg px-3 py-5 cursor-pointer transition-all duration-150 hover:border-brass-dim">
-              <span class="check-dot absolute top-2 right-2 w-4 h-4 rounded-full bg-brass dark:bg-brass-dark flex items-center justify-center"><i class="ti ti-check text-white" style="font-size:11px"></i></span>
-              <span class="w-12 h-12 rounded-full bg-surface-2 dark:bg-surface-2-dark flex items-center justify-center font-display text-lg text-brass-dim dark:text-brass-dim-dark">DA</span>
-              <span class="text-sm font-medium">Diego Alves</span>
-              <span class="text-[11px] text-ink-dim dark:text-ink-dim-dark -mt-1">Barbeiro-chefe</span>
-            </label>
-          </div>
-
-          <div class="pick-card">
-            <input type="radio" name="barber" id="brb-2" value="Rafael Melo" class="peer hidden">
-            <label for="brb-2" class="relative flex flex-col items-center text-center gap-2 border border-line dark:border-line-dark rounded-lg px-3 py-5 cursor-pointer transition-all duration-150 hover:border-brass-dim">
-              <span class="check-dot absolute top-2 right-2 w-4 h-4 rounded-full bg-brass dark:bg-brass-dark flex items-center justify-center"><i class="ti ti-check text-white" style="font-size:11px"></i></span>
-              <span class="w-12 h-12 rounded-full bg-surface-2 dark:bg-surface-2-dark flex items-center justify-center font-display text-lg text-brass-dim dark:text-brass-dim-dark">RM</span>
-              <span class="text-sm font-medium">Rafael Melo</span>
-              <span class="text-[11px] text-ink-dim dark:text-ink-dim-dark -mt-1">Barba · pigmentação</span>
-            </label>
-          </div>
-
-          <div class="pick-card">
-            <input type="radio" name="barber" id="brb-3" value="João Silva" class="peer hidden">
-            <label for="brb-3" class="relative flex flex-col items-center text-center gap-2 border border-line dark:border-line-dark rounded-lg px-3 py-5 cursor-pointer transition-all duration-150 hover:border-brass-dim">
-              <span class="check-dot absolute top-2 right-2 w-4 h-4 rounded-full bg-brass dark:bg-brass-dark flex items-center justify-center"><i class="ti ti-check text-white" style="font-size:11px"></i></span>
-              <span class="w-12 h-12 rounded-full bg-surface-2 dark:bg-surface-2-dark flex items-center justify-center font-display text-lg text-brass-dim dark:text-brass-dim-dark">JS</span>
-              <span class="text-sm font-medium">João Silva</span>
-              <span class="text-[11px] text-ink-dim dark:text-ink-dim-dark -mt-1">Infantil · platinado</span>
-            </label>
-          </div>
+          @forelse ($barbeiros as $barbeiro)
+            @php
+              $iniciais = collect(explode(' ', trim($barbeiro->user->name)))
+                ->filter()
+                ->take(2)
+                ->map(fn ($parte) => mb_substr($parte, 0, 1))
+                ->implode('');
+              $especialidades = collect(explode(',', $barbeiro->especialidades ?? ''))
+                ->map(fn ($especialidade) => trim($especialidade))
+                ->filter()
+                ->implode(' · ');
+            @endphp
+            <div class="pick-card">
+              <input type="radio" name="barber" id="brb-{{ $barbeiro->id }}" value="{{ $barbeiro->user->name }}" class="peer hidden">
+              <label for="brb-{{ $barbeiro->id }}" class="relative flex flex-col items-center text-center gap-2 border border-line dark:border-line-dark rounded-lg px-3 py-5 cursor-pointer transition-all duration-150 hover:border-brass-dim">
+                <span class="check-dot absolute top-2 right-2 w-4 h-4 rounded-full bg-brass dark:bg-brass-dark flex items-center justify-center"><i class="ti ti-check text-white" style="font-size:11px"></i></span>
+                <span class="w-12 h-12 rounded-full bg-surface-2 dark:bg-surface-2-dark flex items-center justify-center font-display text-lg text-brass-dim dark:text-brass-dim-dark">{{ mb_strtoupper($iniciais) }}</span>
+                <span class="text-sm font-medium">{{ $barbeiro->user->name }}</span>
+                <span class="text-[11px] text-ink-dim dark:text-ink-dim-dark -mt-1">{{ $barbeiro->cargo ?: ($especialidades ?: 'Barbeiro') }}</span>
+              </label>
+            </div>
+          @empty
+            <p class="sm:col-span-2 lg:col-span-4 text-sm text-ink-dim dark:text-ink-dim-dark">Nenhum barbeiro disponível para agendamento neste momento.</p>
+          @endforelse
 
         </div>
       </div>

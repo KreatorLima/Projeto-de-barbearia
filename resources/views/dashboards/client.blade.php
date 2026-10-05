@@ -195,46 +195,41 @@
       <h2 class="font-display uppercase text-[32px] md:text-[42px] mt-2.5">Sobre nós</h2>
       <p class="text-ink-dim dark:text-ink-dim-dark text-[15px] mt-4">
         Abrimos as portas em 2016 numa esquina do Centro de Boituva, com uma cadeira e uma navalha.
-        Hoje somos três barbeiros e uma clientela que virou vizinhança. O compromisso continua o mesmo:
+        Construímos uma clientela que virou vizinhança. O compromisso continua o mesmo:
         atendimento marcado, sem enrolação, e um corte que dura a semana inteira.
       </p>
     </div>
 
     <!-- equipe -->
     <div class="grid md:grid-cols-3 gap-6 mb-16">
-      <div class="bg-card dark:bg-card-dark border border-line dark:border-line-dark rounded-xl overflow-hidden">
-        <div class="h-[220px] bg-surface-2 dark:bg-surface-2-dark border-b border-line dark:border-line-dark flex items-center justify-center font-display text-4xl text-brass-dim dark:text-brass-dim-dark">DA</div>
-        <div class="px-5 pt-5 pb-5">
-          <h3 class="text-lg font-semibold">Diego Alves</h3>
-          <div class="font-mono text-[13px] text-brass dark:text-brass-dark my-1.5">Barbeiro-chefe · 12 anos</div>
-          <div class="flex flex-wrap gap-1.5">
-            <span class="text-[11px] text-ink-dim dark:text-ink-dim-dark border border-line dark:border-line-dark px-2.5 py-1 rounded-full">Navalha</span>
-            <span class="text-[11px] text-ink-dim dark:text-ink-dim-dark border border-line dark:border-line-dark px-2.5 py-1 rounded-full">Degradê</span>
+      @forelse ($barbeiros as $barbeiro)
+        @php
+          $iniciais = collect(explode(' ', trim($barbeiro->user->name)))
+            ->filter()
+            ->take(2)
+            ->map(fn ($parte) => mb_substr($parte, 0, 1))
+            ->implode('');
+          $especialidades = collect(explode(',', $barbeiro->especialidades ?? ''))
+            ->map(fn ($especialidade) => trim($especialidade))
+            ->filter();
+        @endphp
+        <div class="bg-card dark:bg-card-dark border border-line dark:border-line-dark rounded-xl overflow-hidden">
+          <div class="h-[220px] bg-surface-2 dark:bg-surface-2-dark border-b border-line dark:border-line-dark flex items-center justify-center font-display text-4xl text-brass-dim dark:text-brass-dim-dark">{{ mb_strtoupper($iniciais) }}</div>
+          <div class="px-5 pt-5 pb-5">
+            <h3 class="text-lg font-semibold">{{ $barbeiro->user->name }}</h3>
+            <div class="font-mono text-[13px] text-brass dark:text-brass-dark my-1.5">{{ $barbeiro->cargo ?: 'Barbeiro' }}</div>
+            @if ($especialidades->isNotEmpty())
+              <div class="flex flex-wrap gap-1.5">
+                @foreach ($especialidades as $especialidade)
+                  <span class="text-[11px] text-ink-dim dark:text-ink-dim-dark border border-line dark:border-line-dark px-2.5 py-1 rounded-full">{{ $especialidade }}</span>
+                @endforeach
+              </div>
+            @endif
           </div>
         </div>
-      </div>
-      <div class="bg-card dark:bg-card-dark border border-line dark:border-line-dark rounded-xl overflow-hidden">
-        <div class="h-[220px] bg-surface-2 dark:bg-surface-2-dark border-b border-line dark:border-line-dark flex items-center justify-center font-display text-4xl text-brass-dim dark:text-brass-dim-dark">RM</div>
-        <div class="px-5 pt-5 pb-5">
-          <h3 class="text-lg font-semibold">Rafael Melo</h3>
-          <div class="font-mono text-[13px] text-brass dark:text-brass-dark my-1.5">Barbeiro · 6 anos</div>
-          <div class="flex flex-wrap gap-1.5">
-            <span class="text-[11px] text-ink-dim dark:text-ink-dim-dark border border-line dark:border-line-dark px-2.5 py-1 rounded-full">Barba</span>
-            <span class="text-[11px] text-ink-dim dark:text-ink-dim-dark border border-line dark:border-line-dark px-2.5 py-1 rounded-full">Pigmentação</span>
-          </div>
-        </div>
-      </div>
-      <div class="bg-card dark:bg-card-dark border border-line dark:border-line-dark rounded-xl overflow-hidden">
-        <div class="h-[220px] bg-surface-2 dark:bg-surface-2-dark border-b border-line dark:border-line-dark flex items-center justify-center font-display text-4xl text-brass-dim dark:text-brass-dim-dark">JS</div>
-        <div class="px-5 pt-5 pb-5">
-          <h3 class="text-lg font-semibold">João Silva</h3>
-          <div class="font-mono text-[13px] text-brass dark:text-brass-dark my-1.5">Barbeiro · 4 anos</div>
-          <div class="flex flex-wrap gap-1.5">
-            <span class="text-[11px] text-ink-dim dark:text-ink-dim-dark border border-line dark:border-line-dark px-2.5 py-1 rounded-full">Corte infantil</span>
-            <span class="text-[11px] text-ink-dim dark:text-ink-dim-dark border border-line dark:border-line-dark px-2.5 py-1 rounded-full">Platinado</span>
-          </div>
-        </div>
-      </div>
+      @empty
+        <p class="md:col-span-3 text-sm text-ink-dim dark:text-ink-dim-dark">Nossa equipe está sendo atualizada.</p>
+      @endforelse
     </div>
 
     <!-- depoimentos -->

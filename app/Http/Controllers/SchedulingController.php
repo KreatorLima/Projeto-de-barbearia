@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Scheduling;
+use App\Models\Barber;
+use Illuminate\Validation\Rule;
 
 class SchedulingController extends Controller
 {
@@ -11,19 +13,32 @@ class SchedulingController extends Controller
     public function index()
     {
         // Busca todos os agendamentos do banco para marcar como "Ocupado" na tabela
-        $agendamentos = Scheduling::orderBy('date', 'asc')->get(); 
+        $agendamentos = Scheduling::orderBy('date', 'asc')->get();
+        $barbeiros = Barber::with('user')
+            ->where('ativo', true)
+            ->whereHas('user', fn ($query) => $query->where('role', 'manager'))
+            ->get();
         
         // Retorna a view injetando a variável $agendamentos
-        return view('scheduling.agendamento', compact('agendamentos'));
+        return view('scheduling.agendamento', compact('agendamentos', 'barbeiros'));
     }
 
     // Salva o agendamento no Banco de Dados
     public function store(Request $request)
     {
+        $barbeirosDisponiveis = Barber::query()
+            ->where('ativo', true)
+            ->whereHas('user', fn ($query) => $query->where('role', 'manager'))
+            ->with('user:id,name')
+            ->get()
+            ->pluck('user.name')
+            ->push('Sem preferência')
+            ->all();
+
         // 1. Validação dos campos
         $request->validate([
             'service' => 'required|string',
-            'barber'  => 'required|string',
+            'barber'  => ['required', 'string', Rule::in($barbeirosDisponiveis)],
             'date'    => 'required|date',
             'time'    => 'required',
             'name'    => 'required|string|max:255',

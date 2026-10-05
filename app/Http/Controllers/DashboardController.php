@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Scheduling;
 use App\Models\User;
 use App\Models\Setting;
+use App\Models\Barber;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash; 
 
@@ -29,7 +30,12 @@ class DashboardController extends Controller
     }
 
     public function clientIndex() {
-        return view('dashboards.client');
+        $barbeiros = Barber::with('user')
+            ->where('ativo', true)
+            ->whereHas('user', fn ($query) => $query->where('role', 'manager'))
+            ->get();
+
+        return view('dashboards.client', compact('barbeiros'));
     }
 
     public function managerIndex()
