@@ -227,7 +227,7 @@
   <section data-reveal>
     <div class="flex items-baseline justify-between gap-3 mb-6 flex-wrap">
       <h2 class="text-xl font-semibold">Equipe</h2>
-      <span id="teamCount" class="font-mono text-[12px] text-ink-dim dark:text-ink-dim-dark">3 barbeiros</span>
+      <span id="teamCount" class="font-mono text-[12px] text-ink-dim dark:text-ink-dim-dark">{{ $equipe->count() }} {{ $equipe->count() === 1 ? 'barbeiro' : 'barbeiros' }}</span>
     </div>
 
     <div class="border border-line dark:border-line-dark rounded-xl overflow-hidden">
@@ -238,10 +238,26 @@
             <th class="px-4 py-3 font-medium hidden sm:table-cell">Cargo</th>
             <th class="px-4 py-3 font-medium hidden md:table-cell">Contato</th>
             <th class="px-4 py-3 font-medium">Status</th>
-            <th class="px-4 py-3 font-medium text-right">Ações</th>
           </tr>
         </thead>
-        <tbody id="teamBody" class="divide-y divide-line dark:divide-line-dark"></tbody>
+        <tbody id="teamBody" class="divide-y divide-line dark:divide-line-dark">
+          @forelse ($equipe as $barbeiro)
+              <tr class="hover:bg-surface-2 dark:hover:bg-surface-2-dark">
+                  <td class="px-4 py-3 font-medium">{{ $barbeiro->user->name }}</td>
+                  <td class="px-4 py-3 text-ink-dim dark:text-ink-dim-dark hidden sm:table-cell">{{ $barbeiro->cargo ?: 'Barbeiro' }}</td>
+                  <td class="px-4 py-3 text-ink-dim dark:text-ink-dim-dark hidden md:table-cell font-mono text-[13px]">{{ $barbeiro->whatsapp ?: '—' }}</td>
+                  <td class="px-4 py-3">
+                    @if ($barbeiro->ativo)
+                      <span class="inline-flex items-center gap-1 text-[11px] font-mono border border-brass-dim dark:border-brass-dim-dark text-brass dark:text-brass-dark rounded-full px-2.5 py-1"><i class="ti ti-circle-check" style="font-size:12px"></i> Ativo</span>
+                    @else
+                      <span class="inline-flex items-center gap-1 text-[11px] font-mono border border-line dark:border-line-dark text-ink-dim dark:text-ink-dim-dark rounded-full px-2.5 py-1"><i class="ti ti-circle-minus" style="font-size:12px"></i> Inativo</span>
+                    @endif
+                  </td>
+              </tr>
+          @empty
+              <tr><td colspan="4" class="px-4 py-6 text-center text-ink-dim dark:text-ink-dim-dark">Nenhum barbeiro cadastrado.</td></tr>
+          @endforelse
+        </tbody>
       </table>
     </div>
   </section>
@@ -445,6 +461,16 @@
 
 
   // ---------- relatório semanal ----------
+  var WEEK = [
+    @foreach ($diasSemana as $dia)
+      {
+        day: @js(ucfirst($dia['dia']->translatedFormat('l'))),
+        cuts: @js($dia['total']),
+        revenue: @js((float) $dia['faturamento']),
+      },
+    @endforeach
+  ];
+
   function renderWeekTable(){
     var totalCuts = WEEK.reduce(function(s,d){ return s + d.cuts; }, 0);
     var totalRevenue = WEEK.reduce(function(s,d){ return s + d.revenue; }, 0);
@@ -568,50 +594,22 @@
     });
   }
 
-  // ---------- formulário de cadastro (client-side apenas) ----------
+  // Valida a confirmação de senha antes de enviar o formulário ao servidor.
   document.getElementById('barberForm').addEventListener('submit', function(e){
-    e.preventDefault();
-
     var pass = document.getElementById('barberPassword').value;
     var confirm = document.getElementById('barberPasswordConfirm').value;
     var errorEl = document.getElementById('formError');
 
     if (pass !== confirm){
+      e.preventDefault();
       errorEl.classList.remove('hidden');
       return;
     }
     errorEl.classList.add('hidden');
-
-    var name = document.getElementById('barberName').value.trim();
-    var role = document.getElementById('barberRole').value.trim();
-    var phone = document.getElementById('barberPhone').value.trim();
-    var active = document.getElementById('barberActive').checked;
-
-    BARBERS.push({
-      name: name,
-      role: role || 'Barbeiro',
-      phone: phone,
-      status: active ? 'ativo' : 'inativo',
-      cuts: 0,
-      revenue: 0,
-    });
-
-    renderTeam();
-    renderRanking();
-
-    this.reset();
-    document.getElementById('barberActive').checked = true;
-
-    var successEl = document.getElementById('formSuccess');
-    successEl.classList.remove('hidden');
-    document.getElementById('teamBody').scrollIntoView({ behavior: 'smooth', block: 'end' });
-    setTimeout(function(){ successEl.classList.add('hidden'); }, 4000);
   });
 
   renderWeekTable();
   renderChart();
-  renderRanking();
-  renderTeam();
 </script>
 
 </body>

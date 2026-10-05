@@ -99,6 +99,13 @@ class DashboardController extends Controller
             ->count();
 
         $barbeirosTotal = User::where('role', 'manager')->count();
+        $equipe = Barber::with('user')
+            ->whereHas('user', fn ($query) => $query->where('role', 'manager'))
+            ->get();
+
+        $especialidades = Barber::select('especialidades')->distinct()->get();
+
+        $cargo = Barber::select('cargo')->distinct()->get();
 
         return view('dashboards.admin', compact(
             'agendamentos',
@@ -107,6 +114,7 @@ class DashboardController extends Controller
             'semana',
             'barbeirosAtivos',
             'barbeirosTotal',
+            'equipe',
             'metaMensal',
             'agendamentosSemana',
             'diasSemana',
@@ -145,7 +153,7 @@ class DashboardController extends Controller
 
         // 2. Usar Transaction para garantir integridade
         DB::transaction(function () use ($request) {
-            
+
             // Cadastra o usuário no sistema como 'manager' (Barbeiro)
             $user = User::create([
                 'name' => $request->nome,
