@@ -14,13 +14,18 @@ class SchedulingController extends Controller
     {
         // Busca todos os agendamentos do banco para marcar como "Ocupado" na tabela
         $agendamentos = Scheduling::orderBy('date', 'asc')->get();
+        $reservas = $agendamentos->map(fn (Scheduling $agendamento) => [
+            'date' => (string) $agendamento->date,
+            'time' => substr((string) $agendamento->time, 0, 5),
+            'barber' => $agendamento->barber,
+        ])->values();
         $barbeiros = Barber::with('user')
             ->where('ativo', true)
             ->whereHas('user', fn ($query) => $query->where('role', 'manager'))
             ->get();
         
         // Retorna a view injetando a variável $agendamentos
-        return view('scheduling.agendamento', compact('agendamentos', 'barbeiros'));
+        return view('scheduling.agendamento', compact('agendamentos', 'barbeiros', 'reservas'));
     }
 
     // Salva o agendamento no Banco de Dados
@@ -45,6 +50,22 @@ class SchedulingController extends Controller
             'phone'   => 'required|string',
             'notes'   => 'nullable|string',
         ]);
+
+        $conflito = Scheduling::where('date', $request->date)
+            ->where('time', $request->time)
+            ->when($request->barber !== 'Sem preferência', function ($query) use ($request) {
+                $query->where(function ($query) use ($request) {
+                    $query->where('barber', $request->barber)
+                        ->orWhere('barber', 'Sem preferência');
+                });
+            })
+            ->exists();
+
+        if ($conflito) {
+            return back()
+                ->withErrors(['time' => 'Esse horário já está ocupado para o barbeiro selecionado.'])
+                ->withInput();
+        }
 
         $precos = [
             'Corte tradicional'    => 45.00,

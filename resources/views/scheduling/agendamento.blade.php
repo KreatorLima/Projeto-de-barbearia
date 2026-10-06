@@ -337,29 +337,11 @@
 
                   @foreach($colunasDias as $dia)
                     @php
-                        $estaOcupado = false;
-                        
-                        // Verifica se existem agendamentos e roda um loop limpo e seguro
-                        if (isset($agendamentos) && (is_array($agendamentos) || is_object($agendamentos))) {
-                            foreach ($agendamentos as $value) {
-                                if ($value && isset($value->date) && isset($value->time)) {
-                                    if ($value->date === $dia['db_date'] && date('H:i', strtotime($value->time)) === $hora) {
-                                        $estaOcupado = true;
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-
                         $ehDomingo = date('w', strtotime($dia['db_date'])) == 0;
                     @endphp
 
                     <td class="p-1">
-                      @if($estaOcupado)
-                        <span class="block text-center text-[11px] font-mono text-ink-dim dark:text-ink-dim-dark bg-surface-2 dark:bg-surface-2-dark rounded py-2.5 cursor-not-allowed line-through decoration-line dark:decoration-line-dark">
-                          Ocupado
-                        </span>
-                      @elseif($ehDomingo)
+                      @if($ehDomingo)
                         <span class="block text-center text-[11px] text-ink-dim/40 dark:text-ink-dim-dark/30 py-2.5">—</span>
                       @else
                         <button type="button" 
@@ -379,7 +361,7 @@
           </table>
         </div>
 
-        <div id="slotError" class="hidden mt-3 text-[13px] text-brick dark:text-brick-dark font-mono">Selecione um horário na tabela acima.</div>
+        <div id="slotError" class="{{ $errors->has('time') ? '' : 'hidden' }} mt-3 text-[13px] text-brick dark:text-brick-dark font-mono" role="alert">{{ $errors->first('time') ?: 'Selecione um horário na tabela acima.' }}</div>
       </div>
 
       <div data-reveal>
@@ -501,6 +483,7 @@
 
   // ---------- estado do agendamento ----------
   var state = { service: null, price: 0, barber: 'Sem preferência', day: null, time: null };
+  var RESERVAS = @js($reservas);
 
   var WHATSAPP_NUMBER = '5515991145977';
 
@@ -539,6 +522,61 @@
     }
   }
 
+  function horarioOcupado(button){
+    var reservasNoHorario = RESERVAS.filter(function(reserva){
+      return reserva.date === button.dataset.dbDate && reserva.time === button.dataset.time;
+    });
+
+    if (state.barber === 'Sem preferência'){
+      return reservasNoHorario.length > 0;
+    }
+
+    return reservasNoHorario.some(function(reserva){
+      return reserva.barber === state.barber || reserva.barber === 'Sem preferência';
+    });
+  }
+
+  function atualizarDisponibilidade(){
+    var classesSelecionadas = ['bg-brass', 'dark:bg-brass-dark', 'text-white', 'dark:text-surface-dark', 'border-brass', 'dark:border-brass-dark'];
+    var classesOcupadas = ['bg-surface-2', 'dark:bg-surface-2-dark', 'line-through', 'cursor-not-allowed', 'opacity-60'];
+    var selecaoFoiOcupada = false;
+
+    document.querySelectorAll('[data-slot]').forEach(function(button){
+      var ocupado = horarioOcupado(button);
+      var selecionado = state.day === button.dataset.day && state.time === button.dataset.time;
+
+      button.disabled = ocupado;
+      button.textContent = ocupado ? 'Ocupado' : button.dataset.time;
+
+      if (ocupado){
+        button.classList.remove.apply(button.classList, classesSelecionadas);
+        button.classList.remove('hover:border-brass-dim', 'hover:text-brass', 'dark:hover:text-brass-dark', 'hover:-translate-y-0.5', 'active:translate-y-0');
+        button.classList.add.apply(button.classList, classesOcupadas);
+        if (selecionado){
+          state.day = null;
+          state.time = null;
+          document.getElementById('input_selected_date').value = '';
+          document.getElementById('input_selected_time').value = '';
+          selecaoFoiOcupada = true;
+        }
+      } else {
+        button.classList.remove.apply(button.classList, classesOcupadas);
+        button.classList.add('hover:border-brass-dim', 'hover:text-brass', 'dark:hover:text-brass-dark', 'hover:-translate-y-0.5', 'active:translate-y-0');
+        if (selecionado){
+          button.classList.remove('border-line', 'dark:border-line-dark');
+          button.classList.add.apply(button.classList, classesSelecionadas);
+        } else {
+          button.classList.remove.apply(button.classList, classesSelecionadas);
+          button.classList.add('border-line', 'dark:border-line-dark');
+        }
+      }
+    });
+
+    if (selecaoFoiOcupada){
+      updateSummary();
+    }
+  }
+
   document.querySelectorAll('input[name="service"]').forEach(function(input){
     input.addEventListener('change', function(){
       state.service = input.value;
@@ -551,6 +589,7 @@
   document.querySelectorAll('input[name="barber"]').forEach(function(input){
     input.addEventListener('change', function(){
       state.barber = input.value;
+      atualizarDisponibilidade();
       updateSummary();
     });
   });
@@ -596,6 +635,7 @@
     }
   });
 
+  atualizarDisponibilidade();
   updateSummary();
 </script>
 
