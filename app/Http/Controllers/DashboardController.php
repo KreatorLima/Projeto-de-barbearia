@@ -41,7 +41,7 @@ class DashboardController extends Controller
     public function managerIndex()
     {
         $agendamentos = Scheduling::where('barber', auth()->user()->name)
-            ->Where('date', today())
+            ->whereDate('date', today())
             ->orderBy('time')
             ->get();
 
