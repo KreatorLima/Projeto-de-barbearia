@@ -102,6 +102,20 @@ class DashboardController extends Controller
         $equipe = Barber::with('user')
             ->whereHas('user', fn ($query) => $query->where('role', 'manager'))
             ->get();
+        $agendamentosPorBarbeiro = $semana->groupBy('barber');
+        $rankingBarbeiros = $equipe
+            ->map(function (Barber $barbeiro) use ($agendamentosPorBarbeiro) {
+                $agendamentosDoBarbeiro = $agendamentosPorBarbeiro->get($barbeiro->user->name, collect());
+
+                return [
+                    'nome' => $barbeiro->user->name,
+                    'cortes' => $agendamentosDoBarbeiro->count(),
+                    'faturamento' => $agendamentosDoBarbeiro->sum(fn ($agendamento) => (float) $agendamento->price),
+                ];
+            })
+            ->sortByDesc('cortes')
+            ->values();
+        $maxCortesRanking = max(1, (int) $rankingBarbeiros->max('cortes'));
 
         $especialidades = Barber::select('especialidades')->distinct()->get();
 
@@ -115,6 +129,8 @@ class DashboardController extends Controller
             'barbeirosAtivos',
             'barbeirosTotal',
             'equipe',
+            'rankingBarbeiros',
+            'maxCortesRanking',
             'metaMensal',
             'agendamentosSemana',
             'diasSemana',

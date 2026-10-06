@@ -9,7 +9,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Mono:wght@400;500&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/2.44.0/iconfont/tabler-icons.min.css">
 <script src="https://cdn.tailwindcss.com"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
 <script>
   tailwind.config = {
     darkMode: 'class',
@@ -170,12 +169,35 @@
   <section data-reveal>
     <div class="flex items-baseline gap-3 mb-6">
       <h2 class="text-xl font-semibold">Relatório da barbearia</h2>
-      <span class="text-ink-dim dark:text-ink-dim-dark font-normal text-sm">— cortes de toda a equipe por dia</span>
+      <span class="text-ink-dim dark:text-ink-dim-dark font-normal text-sm">— faturamento da equipe por dia</span>
     </div>
 
     <div class="grid lg:grid-cols-[1.3fr_1fr] gap-6 items-start">
       <div class="bg-card dark:bg-card-dark border border-line dark:border-line-dark rounded-xl p-5">
-        <canvas id="weekChart" height="220"></canvas>
+        @php
+          $maxFaturamentoGrafico = max(1, (float) $diasSemana->max('faturamento'));
+        @endphp
+        <div role="img" aria-label="Gráfico de barras do faturamento por dia da semana" class="flex h-[230px] items-end gap-2 sm:gap-4">
+          @foreach ($diasSemana as $dia)
+            @php
+              $alturaBarra = (int) round(($dia['faturamento'] / $maxFaturamentoGrafico) * 150);
+              $nomeDia = ucfirst($dia['dia']->locale('pt_BR')->translatedFormat('l'));
+            @endphp
+            <div class="flex h-full min-w-0 flex-1 flex-col items-center justify-end gap-2">
+              <span class="whitespace-nowrap font-mono text-[10px] text-ink-dim dark:text-ink-dim-dark sm:text-xs">
+                R$ {{ number_format($dia['faturamento'], 2, ',', '.') }}
+              </span>
+              <div class="flex h-[150px] w-full items-end justify-center border-b border-line dark:border-line-dark">
+                <div
+                  class="w-6 rounded-t bg-brass dark:bg-brass-dark transition-all sm:w-9"
+                  style="height: {{ $alturaBarra }}px"
+                  title="{{ $nomeDia }}: R$ {{ number_format($dia['faturamento'], 2, ',', '.') }}"
+                ></div>
+              </div>
+              <span class="font-mono text-[10px] text-ink-dim dark:text-ink-dim-dark sm:text-xs">{{ mb_substr($nomeDia, 0, 3) }}</span>
+            </div>
+          @endforeach
+        </div>
       </div>
 
       <div class="border border-line dark:border-line-dark rounded-xl overflow-hidden">
@@ -190,7 +212,7 @@
           <tbody id="weekBody" class="divide-y divide-line dark:divide-line-dark">
               @foreach ($diasSemana as $dia)
               <tr>
-                  <td class="px-4 py-3">{{ ucfirst($dia['dia']->translatedFormat('l')) }}</td>
+                  <td class="px-4 py-3">{{ ucfirst($dia['dia']->locale('pt_BR')->translatedFormat('l')) }}</td>
                   <td class="px-4 py-3 text-right">{{ $dia['total'] }}</td>
                   <td class="px-4 py-3 text-right">R$ {{ number_format($dia['faturamento'], 2, ',', '.') }}</td>
               </tr>
@@ -218,7 +240,27 @@
             <th class="px-4 py-3 font-medium">Desempenho</th>
           </tr>
         </thead>
-        <tbody id="rankingBody" class="divide-y divide-line dark:divide-line-dark"></tbody>
+        <tbody class="divide-y divide-line dark:divide-line-dark">
+          @forelse ($rankingBarbeiros as $indice => $barbeiro)
+            <tr class="hover:bg-surface-2 dark:hover:bg-surface-2-dark">
+              <td class="px-4 py-3 font-medium flex items-center gap-2">
+                @if ($indice === 0 && $barbeiro['cortes'] > 0)
+                  <i class="ti ti-trophy text-brass dark:text-brass-dark" style="font-size:15px" title="Top da semana"></i>
+                @endif
+                {{ $barbeiro['nome'] }}
+              </td>
+              <td class="px-4 py-3 text-right font-mono text-[13px]">{{ $barbeiro['cortes'] }}</td>
+              <td class="px-4 py-3 text-right font-mono text-[13px]">R$ {{ number_format($barbeiro['faturamento'], 2, ',', '.') }}</td>
+              <td class="px-4 py-3">
+                <div class="h-1.5 w-full max-w-[140px] rounded-full bg-surface-2 dark:bg-surface-2-dark overflow-hidden">
+                  <div class="h-full rounded-full bg-brass dark:bg-brass-dark" style="width: {{ min(100, round(($barbeiro['cortes'] / $maxCortesRanking) * 100)) }}%"></div>
+                </div>
+              </td>
+            </tr>
+          @empty
+            <tr><td colspan="4" class="px-4 py-6 text-center text-ink-dim dark:text-ink-dim-dark">Nenhum barbeiro cadastrado.</td></tr>
+          @endforelse
+        </tbody>
       </table>
     </div>
   </section>
@@ -386,7 +428,6 @@
 <script>
   document.getElementById('themeToggle').addEventListener('click', function(){
     document.documentElement.classList.toggle('dark');
-    renderChart();
   });
 
   // ---------- modal: editar meta mensal ----------
@@ -464,12 +505,19 @@
   var WEEK = [
     @foreach ($diasSemana as $dia)
       {
-        day: @js(ucfirst($dia['dia']->translatedFormat('l'))),
+        day: @js(ucfirst($dia['dia']->locale('pt_BR')->translatedFormat('l'))),
         cuts: @js($dia['total']),
         revenue: @js((float) $dia['faturamento']),
       },
     @endforeach
   ];
+
+  function money(value){
+    return 'R$ ' + Number(value || 0).toLocaleString('pt-BR', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
+  }
 
   function renderWeekTable(){
     var totalCuts = WEEK.reduce(function(s,d){ return s + d.cuts; }, 0);
@@ -484,38 +532,6 @@
     }).join('');
     document.getElementById('weekTotalCuts').textContent = totalCuts;
     document.getElementById('weekTotalRevenue').textContent = money(totalRevenue);
-  }
-
-  var chart = null;
-  function renderChart(){
-    var isDark = document.documentElement.classList.contains('dark');
-    var brass = isDark ? '#C1904F' : '#A06E2E';
-    var ink = isDark ? '#A39C92' : '#6E675D';
-    var grid = isDark ? '#2C2C2A' : '#E7E2D9';
-
-    var ctx = document.getElementById('weekChart').getContext('2d');
-    if (chart) chart.destroy();
-    chart = new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels: WEEK.map(function(d){ return d.day.slice(0,3); }),
-        datasets: [{
-          label: 'Cortes',
-          data: WEEK.map(function(d){ return d.cuts; }),
-          backgroundColor: brass,
-          borderRadius: 4,
-          maxBarThickness: 36,
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: { legend: { display: false } },
-        scales: {
-          x: { grid: { display: false }, ticks: { color: ink, font: { family: 'IBM Plex Mono', size: 11 } } },
-          y: { beginAtZero: true, grid: { color: grid }, ticks: { color: ink, font: { family: 'IBM Plex Mono', size: 11 }, stepSize: 4 } }
-        }
-      }
-    });
   }
 
   // ---------- ranking ----------
@@ -609,7 +625,6 @@
   });
 
   renderWeekTable();
-  renderChart();
 </script>
 
 </body>

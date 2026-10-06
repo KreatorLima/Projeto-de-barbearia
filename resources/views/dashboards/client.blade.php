@@ -332,13 +332,13 @@
       <div>
         <h3 class="font-mono text-[15px] text-brass dark:text-brass-dark mb-4">Horário</h3>
         <div class="flex justify-between text-sm py-1.5 border-b border-dotted border-line dark:border-line-dark">
-          <span class="text-ink-dim dark:text-ink-dim-dark">Ter — Sex</span><b class="font-medium">9h às 20h</b>
+          <span class="text-ink-dim dark:text-ink-dim-dark">Seg — Sex</span><b class="font-medium">9h às 20h</b>
         </div>
         <div class="flex justify-between text-sm py-1.5 border-b border-dotted border-line dark:border-line-dark">
           <span class="text-ink-dim dark:text-ink-dim-dark">Sábado</span><b class="font-medium">8h às 18h</b>
         </div>
         <div class="flex justify-between text-sm py-1.5 border-b border-dotted border-line dark:border-line-dark">
-          <span class="text-ink-dim dark:text-ink-dim-dark">Dom / Seg</span><b class="font-medium">Fechado</b>
+          <span class="text-ink-dim dark:text-ink-dim-dark">Dom</span><b class="font-medium">Fechado</b>
         </div>
       </div>
       <div>
