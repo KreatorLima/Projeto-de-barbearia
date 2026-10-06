@@ -72,7 +72,7 @@
 <body class="bg-surface dark:bg-surface-dark text-ink dark:text-ink-dark font-sans leading-relaxed antialiased transition-colors duration-200">
 
 <header class="sticky top-0 z-50 border-b border-line dark:border-line-dark bg-surface/90 dark:bg-surface-dark/90 backdrop-blur">
-  <nav class="max-w-[1120px] mx-auto px-8 h-[76px] flex items-center justify-between">
+  <nav class="max-w-[1120px] mx-auto px-4 sm:px-6 lg:px-8 h-[76px] flex items-center justify-between">
     <a href="{{ route('dashboard') }}" class="flex items-center gap-2.5 font-display text-xl tracking-wide hover:opacity-80 transition-opacity">
       <img src="/img/logo.png" alt="Alameda Barbearia" class="h-14 w-14 invert dark:invert-0" />
     </a>
@@ -95,19 +95,27 @@
   </nav>
 
   <div id="mobileMenu" class="md:hidden overflow-hidden max-h-0 transition-[max-height] duration-300 ease-in-out bg-surface dark:bg-surface-dark">
-    <div class="max-w-[1120px] mx-auto px-8 py-4 flex flex-col gap-1 text-sm">
-      <a href="index.html#sobre" class="py-3 border-b border-line dark:border-line-dark text-ink-dim dark:text-ink-dim-dark hover:text-brass dark:hover:text-brass-dark">Sobre nós</a>
-      <a href="index.html#servicos" class="py-3 border-b border-line dark:border-line-dark text-ink-dim dark:text-ink-dim-dark hover:text-brass dark:hover:text-brass-dark">Serviços</a>
-      <a href="index.html#contato" class="py-3 text-ink-dim dark:text-ink-dim-dark hover:text-brass dark:hover:text-brass-dark">Contatos</a>
-      <a href="agendamento.html" class="mt-3 text-center font-mono text-xs tracking-wide bg-brass dark:bg-brass-dark text-white dark:text-surface-dark px-5 py-3 rounded">Agendar já</a>
+    <div class="max-w-[1120px] mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col gap-1 text-sm">
+      <a href="{{ route('dashboard') }}" class="py-3 border-b border-line dark:border-line-dark text-ink-dim dark:text-ink-dim-dark hover:text-brass dark:hover:text-brass-dark">Painel</a>
+      <a href="{{ route('dashboard') }}#servicos" class="py-3 border-b border-line dark:border-line-dark text-ink-dim dark:text-ink-dim-dark hover:text-brass dark:hover:text-brass-dark">Serviços</a>
+      <a href="{{ route('dashboard') }}#contato" class="py-3 text-ink-dim dark:text-ink-dim-dark hover:text-brass dark:hover:text-brass-dark">Contatos</a>
+      @guest
+        <a href="{{ route('login') }}" class="mt-3 text-center font-mono text-xs tracking-wide bg-brass dark:bg-brass-dark text-white dark:text-surface-dark px-5 py-3 rounded">Entrar</a>
+      @endguest
+      @auth
+        <form method="POST" action="{{ route('logout') }}" class="mt-2">
+          @csrf
+          <button type="submit" class="w-full rounded border border-red-500/30 px-4 py-3 text-left font-mono text-xs tracking-wide text-red-500 dark:text-red-400 hover:bg-red-500 hover:text-white transition-colors">Sair da conta</button>
+        </form>
+      @endauth
     </div>
   </div>
 </header>
 
 <section class="border-b border-line dark:border-line-dark py-14">
-  <div class="max-w-[1120px] mx-auto px-8">
+  <div class="max-w-[1120px] mx-auto px-4 sm:px-6 lg:px-8">
     <span class="hero-anim block font-mono text-xs tracking-[0.14em] uppercase text-brass dark:text-brass-dark" style="animation-delay:0ms">Agendamento online</span>
-    <h1 class="hero-anim font-display uppercase leading-[1.05] text-[36px] md:text-[52px] mt-2.5" style="animation-delay:80ms">Marque seu horário</h1>
+    <h1 class="hero-anim font-display uppercase leading-[1.05] text-[32px] sm:text-[36px] md:text-[52px] mt-2.5" style="animation-delay:80ms">Marque seu horário</h1>
     <p class="hero-anim max-w-[520px] text-ink-dim dark:text-ink-dim-dark text-[15px] mt-4" style="animation-delay:160ms">
       Escolha o serviço, o barbeiro e o horário. Leva menos de um minuto — e você ainda pode confirmar tudo direto pelo WhatsApp.
     </p>
@@ -115,7 +123,7 @@
 </section>
 
 <section class="py-16">
-  <div class="max-w-[1120px] mx-auto px-8 grid lg:grid-cols-[1fr_360px] gap-12 items-start">
+  <div class="max-w-[1120px] mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-[1fr_360px] gap-8 lg:gap-12 items-start">
 
     <form id="bookingForm" action="{{ route('agendamentos.store') }}" method="POST" class="space-y-14">
       @csrf
@@ -440,7 +448,7 @@
 </section>
 
 <footer class="border-t border-line dark:border-line-dark py-6">
-  <div class="max-w-[1120px] mx-auto px-8 flex flex-wrap justify-between items-center gap-3 text-xs text-ink-dim dark:text-ink-dim-dark">
+  <div class="max-w-[1120px] mx-auto px-4 sm:px-6 lg:px-8 flex flex-wrap justify-between items-center gap-3 text-xs text-ink-dim dark:text-ink-dim-dark">
     <span>© 2026 Alameda Barbearia</span>
     <a href="index.html" class="hover:text-brass dark:hover:text-brass-dark">Voltar ao site</a>
   </div>
@@ -458,8 +466,9 @@
   var menuIcon = document.getElementById('menuIcon');
   function setMenu(open){
     mobileMenu.classList.toggle('max-h-0', !open);
-    mobileMenu.classList.toggle('max-h-[320px]', open);
+    mobileMenu.classList.toggle('max-h-[560px]', open);
     menuBtn.setAttribute('aria-expanded', String(open));
+    menuBtn.setAttribute('aria-label', open ? 'Fechar menu' : 'Abrir menu');
     menuIcon.className = open ? 'ti ti-x' : 'ti ti-menu-2';
   }
   menuBtn.addEventListener('click', function(){

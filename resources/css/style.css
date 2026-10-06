@@ -11,15 +11,16 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    min-height: 100vh;
     background-color: #121212;
     margin: 0;
+    padding: 24px;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .container {
-    width: 1200px;
-    height: 650px;
+    width: min(100%, 1200px);
+    min-height: 650px;
     border-radius: 12px;
     background-color: #191A1D;
     display: flex;
@@ -28,8 +29,8 @@ body {
 
 
 .logo-area {
-    width: 550px;
-    height: 650px;
+    width: 46%;
+    min-height: 650px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -42,10 +43,15 @@ body {
     height: auto;
 }
 
+.logo-area img {
+    width: min(400px, 100%);
+    height: auto;
+}
+
 
 .login-area {
-    width: 650px;
-    height: 650px;
+    width: 54%;
+    min-height: 650px;
     border-top-right-radius: 12px;
     border-bottom-right-radius: 12px;
     background-color: #1C1D21;
@@ -53,7 +59,7 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 0 100px;
+    padding: 40px clamp(24px, 7vw, 100px);
 }
 
 .title {
@@ -146,4 +152,62 @@ body {
 .botao:hover {
     background-color: #B29267;
     box-shadow: 0 0 15px rgba(197, 168, 128, 0.4);
+}
+
+@media (max-width: 768px) {
+    body {
+        align-items: flex-start;
+        padding: 16px;
+    }
+
+    .container {
+        width: min(100%, 480px);
+        min-height: 0;
+        margin: auto;
+        flex-direction: column;
+    }
+
+    .logo-area {
+        width: 100%;
+        min-height: 160px;
+        height: 160px;
+        border-right: 0;
+        border-bottom: 2px solid #C5A880;
+        padding: 16px;
+    }
+
+    .logo-area img {
+        width: min(150px, 50vw);
+    }
+
+    .login-area {
+        width: 100%;
+        min-height: 0;
+        height: auto;
+        border-radius: 0 0 12px 12px;
+        padding: 28px 24px 32px;
+    }
+
+    .title {
+        font-size: 32px;
+    }
+
+    .subtitle {
+        margin-bottom: 24px;
+        text-align: center;
+    }
+}
+
+@media (max-width: 420px) {
+    body {
+        padding: 10px;
+    }
+
+    .login-area {
+        padding: 24px 18px 28px;
+    }
+
+    .title {
+        font-size: 29px;
+    }
 }

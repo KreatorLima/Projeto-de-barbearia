@@ -59,13 +59,13 @@
 <body class="bg-surface dark:bg-surface-dark text-ink dark:text-ink-dark font-sans leading-relaxed antialiased transition-colors duration-200">
 
 <header class="sticky top-0 z-50 border-b border-line dark:border-line-dark bg-surface/90 dark:bg-surface-dark/90 backdrop-blur">
-  <nav class="max-w-[1120px] mx-auto px-8 h-[76px] flex items-center justify-between">
+  <nav class="max-w-[1120px] mx-auto px-4 sm:px-6 lg:px-8 h-[76px] flex items-center justify-between">
     <a href="/" class="flex items-center gap-2.5 font-display text-xl tracking-wide">
       <img src="/img/logo.png" alt="Alameda Barbearia" class="h-14 w-14 invert dark:invert-0" />
     </a>
     
     <div class="flex items-center gap-3">
-      <a href="{{ route('scheduling.index') }}" class="hidden sm:inline-block font-mono text-xs tracking-wide border border-brass-dim dark:border-brass-dim-dark text-brass dark:text-brass-dark px-5 py-2.5 rounded hover:bg-brass dark:hover:bg-brass-dark hover:text-white dark:hover:text-surface-dark whitespace-nowrap">
+      <a href="{{ route('scheduling.index') }}" class="hidden md:inline-block font-mono text-xs tracking-wide border border-brass-dim dark:border-brass-dim-dark text-brass dark:text-brass-dark px-5 py-2.5 rounded hover:bg-brass dark:hover:bg-brass-dark hover:text-white dark:hover:text-surface-dark whitespace-nowrap">
         Agendar horário
       </a>
 
@@ -76,7 +76,7 @@
 
       <form method="POST" action="{{ route('logout') }}" class="inline">
         @csrf
-        <button type="submit" aria-label="Sair da conta" class="hidden sm:flex w-9 h-9 rounded border border-red-500/30 text-red-500 dark:text-red-400 hover:bg-red-500 hover:text-white dark:hover:text-white transition-colors items-center justify-center">
+        <button type="submit" aria-label="Sair da conta" class="hidden md:flex w-9 h-9 rounded border border-red-500/30 text-red-500 dark:text-red-400 hover:bg-red-500 hover:text-white dark:hover:text-white transition-colors items-center justify-center">
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M14 8v-2a2 2 0 0 0 -2 -2h-7a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2 -2v-2" />
             <path d="M9 12h12l-3 -3" />
@@ -93,17 +93,17 @@
   </nav>
 
   <div id="mobileMenu" class="hidden md:hidden border-t border-line dark:border-line-dark bg-surface dark:bg-surface-dark">
-      <form method="POST" action="{{ route('logout') }}" class="mt-2">
+    <div class="max-w-[1120px] mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-col gap-2">
+      <a href="{{ route('scheduling.index') }}" class="rounded border border-brass-dim dark:border-brass-dim-dark px-4 py-3 text-center font-mono text-xs tracking-wide text-brass dark:text-brass-dark">Agendar horário</a>
+      <form method="POST" action="{{ route('logout') }}">
         @csrf
-        <button type="submit" class="w-full text-center font-mono text-xs tracking-wide border border-red-500/30 text-red-500 dark:text-red-400 px-5 py-3 rounded hover:bg-red-500 hover:text-white transition-colors">
-          Sair da Conta
-        </button>
+        <button type="submit" class="w-full rounded border border-red-500/30 px-4 py-3 text-left font-mono text-xs tracking-wide text-red-500 dark:text-red-400 hover:bg-red-500 hover:text-white transition-colors">Sair da conta</button>
       </form>
     </div>
   </div>
 </header>
 
-<main class="max-w-[1120px] mx-auto px-8 py-12 space-y-14">
+<main class="max-w-[1120px] mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-10 sm:space-y-14">
 
   <section data-reveal>
     <div class="flex flex-wrap items-center gap-5 mb-8">
@@ -176,8 +176,8 @@
       </span>
     </div>
 
-    <div class="border border-line dark:border-line-dark rounded-xl overflow-hidden">
-      <table class="w-full text-sm">
+    <div class="border border-line dark:border-line-dark rounded-xl overflow-x-auto">
+      <table class="w-full min-w-[620px] text-sm">
         <thead>
           <tr class="bg-surface-2 dark:bg-surface-2-dark text-left text-[11px] uppercase tracking-wide text-ink-dim dark:text-ink-dim-dark">
             <th class="px-4 py-3 font-medium">Horário</th>
@@ -305,7 +305,7 @@
 </main>
 
 <footer class="border-t border-line dark:border-line-dark py-6 mt-4">
-  <div class="max-w-[1120px] mx-auto px-8 flex flex-wrap justify-between items-center gap-3 text-xs text-ink-dim dark:text-ink-dim-dark">
+  <div class="max-w-[1120px] mx-auto px-4 sm:px-6 lg:px-8 flex flex-wrap justify-between items-center gap-3 text-xs text-ink-dim dark:text-ink-dim-dark">
     <span>© 2026 Alameda Barbearia</span>
     <a href="/" class="hover:text-brass dark:hover:text-brass-dark">Voltar ao site</a>
   </div>
@@ -322,7 +322,12 @@
   const mobileMenu = document.getElementById('mobileMenu');
   if (menuToggle && mobileMenu) {
     menuToggle.addEventListener('click', function(){
-      mobileMenu.classList.toggle('hidden');
+      var isOpen = menuToggle.getAttribute('aria-expanded') === 'true';
+      mobileMenu.classList.toggle('hidden', isOpen);
+      menuToggle.setAttribute('aria-expanded', String(!isOpen));
+      menuToggle.setAttribute('aria-label', isOpen ? 'Abrir menu' : 'Fechar menu');
+      var menuIcon = document.getElementById('menuIcon');
+      if (menuIcon) menuIcon.className = isOpen ? 'ti ti-menu-2' : 'ti ti-x';
     });
   }
 

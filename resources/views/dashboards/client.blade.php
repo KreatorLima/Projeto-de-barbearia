@@ -62,7 +62,7 @@
 
 <!-- ================= NAV ================= -->
 <header class="sticky top-0 z-50 border-b border-line dark:border-line-dark bg-surface/90 dark:bg-surface-dark/90 backdrop-blur">
-  <nav class="max-w-[1120px] mx-auto px-8 h-[76px] flex items-center justify-between">
+  <nav class="max-w-[1120px] mx-auto px-4 sm:px-6 lg:px-8 h-[76px] flex items-center justify-between">
     <div class="flex items-center gap-2.5 font-display text-xl tracking-wide">
       <img src="/img/logo.png" alt="Alameda Barbearia" class="h-14 w-14 invert dark:invert-0" />
     </div>
@@ -75,7 +75,7 @@
     </div>
     
     <div class="flex items-center gap-3">
-      <a href="{{ route('scheduling.index') }}" class="hidden sm:inline-block font-mono text-xs tracking-wide border border-brass-dim dark:border-brass-dim-dark text-brass dark:text-brass-dark px-5 py-2.5 rounded hover:bg-brass dark:hover:bg-brass-dark hover:text-white dark:hover:text-surface-dark whitespace-nowrap">
+      <a href="{{ route('scheduling.index') }}" class="hidden md:inline-block font-mono text-xs tracking-wide border border-brass-dim dark:border-brass-dim-dark text-brass dark:text-brass-dark px-5 py-2.5 rounded hover:bg-brass dark:hover:bg-brass-dark hover:text-white dark:hover:text-surface-dark whitespace-nowrap">
         Agendar horário
       </a>
 
@@ -86,7 +86,7 @@
 
       <form method="POST" action="{{ route('logout') }}" class="inline">
         @csrf
-        <button type="submit" aria-label="Sair da conta" class="hidden sm:flex w-9 h-9 rounded border border-red-500/30 text-red-500 dark:text-red-400 hover:bg-red-500 hover:text-white dark:hover:text-white transition-colors items-center justify-center">
+        <button type="submit" aria-label="Sair da conta" class="hidden md:flex w-9 h-9 rounded border border-red-500/30 text-red-500 dark:text-red-400 hover:bg-red-500 hover:text-white dark:hover:text-white transition-colors items-center justify-center">
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M14 8v-2a2 2 0 0 0 -2 -2h-7a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2 -2v-2" />
             <path d="M9 12h12l-3 -3" />
@@ -104,22 +104,26 @@
 
   <!-- menu mobile -->
   <div id="mobileMenu" class="hidden md:hidden border-t border-line dark:border-line-dark bg-surface dark:bg-surface-dark">
-    <div class="max-w-[1120px] mx-auto px-8 py-4 flex flex-col gap-1 text-sm">
+    <div class="max-w-[1120px] mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col gap-1 text-sm">
       <a href="#agende-ja" data-nav-link class="py-3 border-b border-line dark:border-line-dark text-ink-dim dark:text-ink-dim-dark hover:text-brass dark:hover:text-brass-dark">Agende já</a>
       <a href="#sobre" data-nav-link class="py-3 border-b border-line dark:border-line-dark text-ink-dim dark:text-ink-dim-dark hover:text-brass dark:hover:text-brass-dark">Sobre nós</a>
       <a href="#servicos" data-nav-link class="py-3 border-b border-line dark:border-line-dark text-ink-dim dark:text-ink-dim-dark hover:text-brass dark:hover:text-brass-dark">Serviços</a>
       <a href="#contato" data-nav-link class="py-3 text-ink-dim dark:text-ink-dim-dark hover:text-brass dark:hover:text-brass-dark">Contatos</a>
       <a href="#agende-ja" class="mt-3 text-center font-mono text-xs tracking-wide bg-brass dark:bg-brass-dark text-white dark:text-surface-dark px-5 py-3 rounded">Agendar horário</a>
+      <form method="POST" action="{{ route('logout') }}" class="mt-2">
+        @csrf
+        <button type="submit" class="w-full rounded border border-red-500/30 px-4 py-3 text-left font-mono text-xs tracking-wide text-red-500 dark:text-red-400 hover:bg-red-500 hover:text-white transition-colors">Sair da conta</button>
+      </form>
     </div>
   </div>
 </header>
 
 <!-- ================= 1. AGENDE JÁ ================= -->
-<section id="agende-ja" class="border-b border-line dark:border-line-dark py-24 scroll-mt-[76px]">
-  <div class="max-w-[1120px] mx-auto px-8 grid md:grid-cols-[1.15fr_0.85fr] gap-14 items-center">
+<section id="agende-ja" class="border-b border-line dark:border-line-dark py-16 sm:py-24 scroll-mt-[76px]">
+  <div class="max-w-[1120px] mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-[1.15fr_0.85fr] gap-8 md:gap-14 items-center">
     <div>
       <span class="font-mono text-xs tracking-[0.14em] uppercase text-brass dark:text-brass-dark">Barbearia de bairro desde 2016</span>
-      <h1 class="font-display uppercase leading-[1.05] text-[48px] md:text-[72px] mt-2.5">
+      <h1 class="font-display uppercase leading-[1.05] text-[40px] sm:text-[48px] md:text-[72px] mt-2.5">
         Corte na régua,<br><span class="text-brass dark:text-brass-dark">sem pressa</span>.
       </h1>
       <p class="max-w-[460px] text-ink-dim dark:text-ink-dim-dark text-[17px] my-6">
@@ -166,7 +170,7 @@
   </div>
 
   <!-- passo a passo do agendamento -->
-  <div class="max-w-[1120px] mx-auto px-8 mt-20">
+  <div class="max-w-[1120px] mx-auto px-4 sm:px-6 lg:px-8 mt-12 sm:mt-20">
     <div class="grid md:grid-cols-3 gap-8">
       <div class="border-l border-brass-dim dark:border-brass-dim-dark pl-5">
         <span class="font-mono text-[13px] text-brass dark:text-brass-dark">01</span>
@@ -188,8 +192,8 @@
 </section>
 
 <!-- ================= 2. SOBRE NÓS ================= -->
-<section id="sobre" class="border-b border-line dark:border-line-dark py-20 scroll-mt-[76px]">
-  <div class="max-w-[1120px] mx-auto px-8">
+<section id="sobre" class="border-b border-line dark:border-line-dark py-14 sm:py-20 scroll-mt-[76px]">
+  <div class="max-w-[1120px] mx-auto px-4 sm:px-6 lg:px-8">
     <div class="max-w-[560px] mb-11">
       <span class="font-mono text-xs tracking-[0.14em] uppercase text-brass dark:text-brass-dark">Nossa história</span>
       <h2 class="font-display uppercase text-[32px] md:text-[42px] mt-2.5">Sobre nós</h2>
@@ -254,8 +258,8 @@
 </section>
 
 <!-- ================= 3. SERVIÇOS ================= -->
-<section id="servicos" class="border-b border-line dark:border-line-dark py-20 scroll-mt-[76px]">
-  <div class="max-w-[1120px] mx-auto px-8">
+<section id="servicos" class="border-b border-line dark:border-line-dark py-14 sm:py-20 scroll-mt-[76px]">
+  <div class="max-w-[1120px] mx-auto px-4 sm:px-6 lg:px-8">
     <div class="max-w-[560px] mb-11">
       <span class="font-mono text-xs tracking-[0.14em] uppercase text-brass dark:text-brass-dark">Cardápio de serviços</span>
       <h2 class="font-display uppercase text-[32px] md:text-[42px] mt-2.5">O que fazemos aqui dentro</h2>
@@ -312,8 +316,8 @@
 </section>
 
 <!-- ================= 4. CONTATOS ================= -->
-<section id="contato" class="py-20 scroll-mt-[76px]">
-  <div class="max-w-[1120px] mx-auto px-8">
+<section id="contato" class="py-14 sm:py-20 scroll-mt-[76px]">
+  <div class="max-w-[1120px] mx-auto px-4 sm:px-6 lg:px-8">
     <div class="max-w-[560px] mb-11">
       <span class="font-mono text-xs tracking-[0.14em] uppercase text-brass dark:text-brass-dark">Fale com a gente</span>
       <h2 class="font-display uppercase text-[32px] md:text-[42px] mt-2.5">Contatos</h2>
@@ -354,7 +358,7 @@
 
 <!-- ================= FOOTER ================= -->
 <footer class="border-t border-line dark:border-line-dark py-6">
-  <div class="max-w-[1120px] mx-auto px-8 flex flex-wrap justify-between items-center gap-3 text-xs text-ink-dim dark:text-ink-dim-dark">
+  <div class="max-w-[1120px] mx-auto px-4 sm:px-6 lg:px-8 flex flex-wrap justify-between items-center gap-3 text-xs text-ink-dim dark:text-ink-dim-dark">
     <span>© 2026 Barber shop</span>
   </div>
 </footer>
@@ -372,12 +376,14 @@
     var isOpen = !mobileMenu.classList.contains('hidden');
     mobileMenu.classList.toggle('hidden');
     menuBtn.setAttribute('aria-expanded', String(!isOpen));
+    menuBtn.setAttribute('aria-label', isOpen ? 'Abrir menu' : 'Fechar menu');
     menuIcon.className = isOpen ? 'ti ti-menu-2' : 'ti ti-x';
   });
   document.querySelectorAll('#mobileMenu [data-nav-link]').forEach(function(link){
     link.addEventListener('click', function(){
       mobileMenu.classList.add('hidden');
       menuBtn.setAttribute('aria-expanded', 'false');
+      menuBtn.setAttribute('aria-label', 'Abrir menu');
       menuIcon.className = 'ti ti-menu-2';
     });
   });

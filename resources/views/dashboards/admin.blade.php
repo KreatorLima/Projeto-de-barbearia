@@ -52,7 +52,7 @@
 
 <!-- ================= TOPBAR ================= -->
 <header class="sticky top-0 z-50 border-b border-line dark:border-line-dark bg-surface/90 dark:bg-surface-dark/90 backdrop-blur">
-  <div class="max-w-[1120px] mx-auto px-8 h-[76px] flex items-center justify-between gap-4">
+  <div class="max-w-[1120px] mx-auto px-4 sm:px-6 lg:px-8 h-[76px] flex items-center justify-between gap-3">
     
     <a href="/" class="flex items-center gap-2.5 font-display text-lg tracking-wide shrink-0 hover:opacity-80 transition-opacity">
       <img src="/img/logo.png" alt="Alameda Barbearia" class="h-14 w-14 invert dark:invert-0" />
@@ -71,7 +71,7 @@
       <form method="POST" action="{{ route('logout') }}" class="inline">
         @csrf
         <button type="submit" aria-label="Sair da conta"
-          class="hidden sm:flex w-9 h-9 rounded border border-red-500/30 text-red-500 dark:text-red-400 hover:bg-red-500 hover:text-white dark:hover:text-white transition-colors items-center justify-center">
+          class="hidden md:flex w-9 h-9 rounded border border-red-500/30 text-red-500 dark:text-red-400 hover:bg-red-500 hover:text-white dark:hover:text-white transition-colors items-center justify-center">
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M14 8v-2a2 2 0 0 0 -2 -2h-7a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2 -2v-2" />
@@ -89,9 +89,19 @@
 
     </div>
   </div>
+  <div id="mobileMenu" class="hidden md:hidden border-t border-line dark:border-line-dark bg-surface dark:bg-surface-dark">
+    <div class="max-w-[1120px] mx-auto px-4 sm:px-6 py-3">
+      <form method="POST" action="{{ route('logout') }}">
+        @csrf
+        <button type="submit" class="w-full rounded border border-red-500/30 px-4 py-3 text-left font-mono text-xs tracking-wide text-red-500 dark:text-red-400 hover:bg-red-500 hover:text-white transition-colors">
+          Sair da conta
+        </button>
+      </form>
+    </div>
+  </div>
 </header>
 
-<main class="max-w-[1120px] mx-auto px-8 py-12 space-y-14">
+<main class="max-w-[1120px] mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-10 sm:space-y-14">
 
   <!-- ================= PERFIL + VISÃO GERAL ================= -->
   <section data-reveal>
@@ -200,8 +210,8 @@
         </div>
       </div>
 
-      <div class="border border-line dark:border-line-dark rounded-xl overflow-hidden">
-        <table class="w-full text-sm">
+      <div class="border border-line dark:border-line-dark rounded-xl overflow-x-auto">
+        <table class="w-full min-w-[420px] text-sm">
           <thead>
             <tr class="bg-surface-2 dark:bg-surface-2-dark text-left text-[11px] uppercase tracking-wide text-ink-dim dark:text-ink-dim-dark">
               <th class="px-4 py-3 font-medium">Dia</th>
@@ -230,8 +240,8 @@
     </div>
 
     <!-- ranking de barbeiros -->
-    <div class="mt-6 border border-line dark:border-line-dark rounded-xl overflow-hidden">
-      <table class="w-full text-sm">
+    <div class="mt-6 border border-line dark:border-line-dark rounded-xl overflow-x-auto">
+      <table class="w-full min-w-[560px] text-sm">
         <thead>
           <tr class="bg-surface-2 dark:bg-surface-2-dark text-left text-[11px] uppercase tracking-wide text-ink-dim dark:text-ink-dim-dark">
             <th class="px-4 py-3 font-medium">Barbeiro</th>
@@ -272,8 +282,8 @@
       <span id="teamCount" class="font-mono text-[12px] text-ink-dim dark:text-ink-dim-dark">{{ $equipe->count() }} {{ $equipe->count() === 1 ? 'barbeiro' : 'barbeiros' }}</span>
     </div>
 
-    <div class="border border-line dark:border-line-dark rounded-xl overflow-hidden">
-      <table class="w-full text-sm">
+    <div class="border border-line dark:border-line-dark rounded-xl overflow-x-auto">
+      <table class="w-full min-w-[520px] text-sm">
         <thead>
           <tr class="bg-surface-2 dark:bg-surface-2-dark text-left text-[11px] uppercase tracking-wide text-ink-dim dark:text-ink-dim-dark">
             <th class="px-4 py-3 font-medium">Barbeiro</th>
@@ -419,7 +429,7 @@
 </div>
 
 <footer class="border-t border-line dark:border-line-dark py-6 mt-4">
-  <div class="max-w-[1120px] mx-auto px-8 flex flex-wrap justify-between items-center gap-3 text-xs text-ink-dim dark:text-ink-dim-dark">
+  <div class="max-w-[1120px] mx-auto px-4 sm:px-6 lg:px-8 flex flex-wrap justify-between items-center gap-3 text-xs text-ink-dim dark:text-ink-dim-dark">
     <span>© 2026 Alameda Barbearia</span>
     <a href="index.html" class="hover:text-brass dark:hover:text-brass-dark">Voltar ao site</a>
   </div>
@@ -428,6 +438,17 @@
 <script>
   document.getElementById('themeToggle').addEventListener('click', function(){
     document.documentElement.classList.toggle('dark');
+  });
+
+  var menuToggle = document.getElementById('menuToggle');
+  var mobileMenu = document.getElementById('mobileMenu');
+  var menuIcon = document.getElementById('menuIcon');
+  menuToggle.addEventListener('click', function(){
+    var isOpen = menuToggle.getAttribute('aria-expanded') === 'true';
+    mobileMenu.classList.toggle('hidden', isOpen);
+    menuToggle.setAttribute('aria-expanded', String(!isOpen));
+    menuToggle.setAttribute('aria-label', isOpen ? 'Abrir menu' : 'Fechar menu');
+    menuIcon.className = isOpen ? 'ti ti-menu-2' : 'ti ti-x';
   });
 
   // ---------- modal: editar meta mensal ----------
