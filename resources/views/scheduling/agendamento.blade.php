@@ -82,11 +82,23 @@
       <a href="{{ route('dashboard') }}#contato" class="nav-link hover:text-brass dark:hover:text-brass-dark transition-colors">Contatos</a>
       <a href="{{ route('scheduling.index') }}" class="nav-link text-brass dark:text-brass-dark">Agendar já</a>
     </div>
-    <div class="flex items-center">
+    <div class="flex items-center gap-2">
       <button id="themeToggle" type="button" aria-label="Alternar tema claro/escuro"
         class="w-9 h-9 rounded border border-line dark:border-line-dark text-ink-dim dark:text-ink-dim-dark hover:border-brass-dim hover:text-brass dark:hover:text-brass-dark hover:rotate-45 transition-all duration-200">
         ◐
       </button>
+      @auth
+        <form method="POST" action="{{ route('logout') }}" class="hidden md:block">
+          @csrf
+          <button type="submit" aria-label="Sair da conta" title="Sair da conta" class="w-9 h-9 rounded border border-red-500/30 text-red-500 dark:text-red-400 hover:bg-red-500 hover:text-white dark:hover:text-white transition-colors flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M14 8v-2a2 2 0 0 0 -2 -2h-7a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2 -2v-2" />
+              <path d="M9 12h12l-3 -3" />
+              <path d="M18 15l3 -3" />
+            </svg>
+          </button>
+        </form>
+      @endauth
       <button id="menuToggle" type="button" aria-label="Abrir menu" aria-expanded="false"
         class="md:hidden ml-3 w-9 h-9 rounded border border-line dark:border-line-dark text-ink-dim dark:text-ink-dim-dark hover:border-brass-dim hover:text-brass dark:hover:text-brass-dark flex items-center justify-center">
         <i class="ti ti-menu-2" style="font-size:18px" aria-hidden="true" id="menuIcon"></i>
@@ -647,6 +659,30 @@
   atualizarDisponibilidade();
   updateSummary();
 </script>
+
+@if (session('success'))
+  <div id="bookingToast" role="status" aria-live="polite" class="fixed bottom-4 left-4 right-4 z-[100] flex items-start gap-3 rounded-xl border border-emerald-500/30 bg-card dark:bg-card-dark p-4 shadow-2xl sm:left-auto sm:w-96 sm:max-w-[calc(100vw-2rem)]">
+    <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+      <i class="ti ti-circle-check" aria-hidden="true" style="font-size:20px"></i>
+    </span>
+    <div class="min-w-0 flex-1">
+      <p class="font-semibold text-ink dark:text-ink-dark">Seu horário já está marcado!</p>
+      <p class="mt-1 text-sm text-ink-dim dark:text-ink-dim-dark">{{ session('success') }}</p>
+    </div>
+    <button id="closeBookingToast" type="button" aria-label="Fechar notificação" class="-mt-1 -mr-1 flex h-8 w-8 shrink-0 items-center justify-center rounded text-ink-dim dark:text-ink-dim-dark hover:bg-surface-2 dark:hover:bg-surface-2-dark">&times;</button>
+  </div>
+  <script>
+    (function () {
+      var toast = document.getElementById('bookingToast');
+      var closeButton = document.getElementById('closeBookingToast');
+      if (!toast || !closeButton) return;
+
+      var dismiss = function () { toast.remove(); };
+      closeButton.addEventListener('click', dismiss);
+      window.setTimeout(dismiss, 6000);
+    })();
+  </script>
+@endif
 
 </body>
 </html>
