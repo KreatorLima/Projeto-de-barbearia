@@ -50,9 +50,16 @@ class DashboardController extends Controller
 
     public function adminIndex()
     {
+        // Aceita os formatos usados por versões antigas e atuais do status.
+        $statusConcluido = ['Concluído', 'concluído', 'Concluido', 'concluido'];
+
         $agendamentos = Scheduling::whereDate('date', today())->get();
-        $agendamentosConcluidos = Scheduling::whereDate('date', today())->where('status', 'concluido')->get();
-        $semana = Scheduling::whereBetween('date', [now()->startOfWeek(), now()->endOfWeek()])->where('status', 'concluido')->get();
+        $agendamentosConcluidos = Scheduling::whereDate('date', today())
+            ->whereIn('status', $statusConcluido)
+            ->get();
+        $semana = Scheduling::whereBetween('date', [now()->startOfWeek(), now()->endOfWeek()])
+            ->whereIn('status', $statusConcluido)
+            ->get();
         $agendamentosMensais = Scheduling::whereMonth('date', now()->month)->get();
         $metaMensal = Setting::first()->monthly_goal ?? 100;
 
@@ -60,7 +67,7 @@ class DashboardController extends Controller
             now()->startOfWeek(\Carbon\Carbon::MONDAY),
             now()->startOfWeek(\Carbon\Carbon::MONDAY)->copy()->addDays(5)
         ])
-        ->where('status', 'Concluído')
+        ->whereIn('status', $statusConcluido)
         ->selectRaw('DATE(date) as dia, COUNT(*) as total')
         ->groupBy('dia')
         ->get();
@@ -69,7 +76,7 @@ class DashboardController extends Controller
             now()->startOfWeek(\Carbon\Carbon::MONDAY),
             now()->startOfWeek(\Carbon\Carbon::MONDAY)->copy()->addDays(5)
         ])
-        ->where('status', 'Concluído')
+        ->whereIn('status', $statusConcluido)
         ->selectRaw('DATE(date) as dia, SUM(price) as total')
         ->groupBy('dia')
         ->get();
