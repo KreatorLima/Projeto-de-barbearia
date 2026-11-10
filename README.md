@@ -1,133 +1,140 @@
-﻿<div align="center" id="top">
+<div align="center" id="top">
   <h1>Barbearia</h1>
-  <p>Aplicação web de gestão para barbearia com autenticação, controle de acesso por função e dashboards personalizados.</p>
+  <p>Aplicação web para agendamento de serviços e gestão de uma barbearia, com áreas para clientes, barbeiros e administradores.</p>
 </div>
 
 <p align="center">
   <a href="#sobre">Sobre</a> &#xa0; | &#xa0;
   <a href="#recursos">Recursos</a> &#xa0; | &#xa0;
   <a href="#tecnologias">Tecnologias</a> &#xa0; | &#xa0;
-  <a href="#requisitos">Requisitos</a> &#xa0; | &#xa0;
   <a href="#instalacao">Instalação</a> &#xa0; | &#xa0;
+  <a href="#rotas">Rotas</a> &#xa0; | &#xa0;
   <a href="#licenca">Licença</a>
 </p>
 
 ## Sobre
 
-Projeto Laravel para gerenciamento de barbearia com login, cadastro, perfil de usuário e painéis diferenciados por função: cliente, gerente e administrador.
-
-A aplicação usa Laravel 12, Laravel Breeze e frontend com Vite, Tailwind CSS, Blade e Alpine.js.
+Projeto desenvolvido com Laravel para apresentar a barbearia, permitir agendamentos online e oferecer painéis de gestão conforme o perfil de acesso. O sistema possui três funções: `client` (cliente), `manager` (barbeiro/equipe) e `admin` (administrador).
 
 ## Recursos
 
-- Autenticação com registro, login e recuperação de senha
-- Controle de acesso por roles: `client`, `manager` e `admin`
-- Dashboards personalizados para cada tipo de usuário
-- Área de perfil para edição de dados e exclusão de conta
-- Middleware customizado para proteção de rotas
-- Tema escuro com persistência local
-- Layout responsivo para desktop e mobile
+- Cadastro, login, logout, verificação de e-mail e recuperação de senha
+- Controle de acesso às áreas de cliente, gerente e administrador por função
+- Página pública com apresentação da barbearia, serviços e equipe
+- Agendamento com escolha de serviço, barbeiro, data e horário
+- Exibição de horários ocupados e validação de conflitos no envio
+- Registro de contato do cliente e observações do agendamento
+- Preços associados aos serviços no momento do agendamento
+- Painel do barbeiro com os atendimentos do próprio profissional no dia
+- Conclusão de atendimentos pelo painel da equipe
+- Painel administrativo com indicadores, faturamento semanal e ranking de barbeiros
+- Configuração da meta mensal e cadastro de perfis de barbeiro pelo painel administrativo
+- Perfil de usuário com atualização de dados e senha e opção de exclusão da conta
+- Alternância entre tema claro e escuro e interfaces responsivas para desktop e celular
 
 ## Tecnologias
 
-- PHP 8.2+
-- Laravel 12
-- Laravel Breeze
+- PHP 8.2 ou superior
+- Laravel 12 e Laravel Breeze
+- Blade
 - Vite
 - Tailwind CSS
 - Alpine.js
-- Blade
-- MySQL / SQLite
+- MySQL ou SQLite (conforme a configuração do ambiente)
 
 ## Requisitos
 
-Antes de começar, instale:
-
-- PHP 8.2 ou superior
+- PHP 8.2 ou superior e extensões exigidas pelo Laravel
 - Composer
-- Node.js 18+ ou compatível
+- Node.js e npm compatíveis com as dependências do projeto
 - Git
+- Um banco de dados configurado, como MySQL ou SQLite
 
 ## Instalação
 
+Os comandos abaixo consideram um terminal Bash. No PowerShell, use `Copy-Item .env.example .env` no lugar de `cp`.
+
 ```bash
-# 1. Clone o repositório
+# Clone o repositório
 git clone https://github.com/KreatorLima/barbearia.git
 cd barbearia
 
-# 2. Instale dependências PHP
+# Instale as dependências PHP
 composer install
 
-# 3. Copie o arquivo de ambiente
-copy .env.example .env
+# Crie o arquivo de ambiente e configure o banco em .env
+cp .env.example .env
 
-# 4. Gere a chave da aplicação
+# Gere a chave da aplicação
 php artisan key:generate
 
-# 5. Ajuste as variáveis de ambiente em .env
-# Exemplo: DB_CONNECTION, DB_HOST, DB_PORT, DB_DATABASE, DB_USERNAME, DB_PASSWORD
-
-# 6. Execute as migrations
+# Crie/atualize as tabelas do banco
 php artisan migrate
 
-# 7. Instale dependências Node
+# Instale as dependências do frontend e compile os arquivos
 npm install
-
-# 8. Compile os assets
 npm run build
 
-# 9. Inicie o servidor
+# Inicie o servidor local
 php artisan serve
 ```
 
-A aplicação estará disponível em: http://localhost:8000
+A aplicação ficará disponível em <http://localhost:8000>.
 
-### Desenvolvimento
+Para desenvolvimento com recompilação dos arquivos do frontend, execute em outro terminal:
 
 ```bash
 npm run dev
 ```
 
-## Estrutura do Projeto
+## Rotas
 
-- `app/Http/Controllers/` - controladores de autenticação, dashboard e perfil
-- `app/Http/Middleware/` - middleware para validação de roles e permissões
-- `app/Models/User.php` - modelo de usuário com campo `role`
-- `resources/views/` - views Blade para dashboards, autenticação e perfil
-- `routes/web.php` - rotas principais
-- `routes/auth.php` - rotas de autenticação
-- `database/migrations/` - migrations do banco de dados
-- `database/seeders/` - seeders iniciais
+| Método | Rota | Acesso | Descrição |
+| --- | --- | --- | --- |
+| `GET` | `/` | Público | Página inicial da barbearia |
+| `GET` | `/agendamento` | Público | Formulário e horários disponíveis para agendamento |
+| `POST` | `/agendamento` | Público | Valida e registra um agendamento |
+| `GET` | `/login` | Público | Acesso à conta |
+| `GET` / `POST` | `/register` | Público | Cadastro de cliente |
+| `GET` | `/forgot-password` | Público | Solicitação de redefinição de senha |
+| `GET` | `/reset-password/{token}` | Público | Redefinição de senha |
+| `GET` | `/dashboard` | Autenticado e verificado | Redireciona à área correspondente à função do usuário |
+| `GET` | `/profile` | Autenticado | Visualização e edição do perfil |
+| `GET` | `/client/dashboard` | Cliente | Painel do cliente |
+| `GET` | `/manager/dashboard` | Gerente/barbeiro | Agenda dos atendimentos do dia atribuídos ao profissional |
+| `POST` | `/agendamentos/{id}/status` | Público (sem middleware de autenticação declarado) | Atualização do status do agendamento |
+| `GET` | `/admin/dashboard` | Administrador | Indicadores, faturamento, ranking e gestão da equipe |
+| `POST` | `/admin/meta` | Administrador | Atualização da meta mensal |
+| `POST` | `/admin/barbeiros` | Administrador | Cadastro de barbeiro e perfil de equipe |
 
-## Páginas do Projeto
+As rotas de autenticação adicionais, incluindo logout, confirmação de senha e verificação de e-mail, são definidas em `routes/auth.php`.
 
-- `GET /` — Página inicial pública com apresentação da barbearia, seções de serviços, equipe e depoimentos, além de navegação para agendar horário.
-- `GET /login` — Tela de acesso ao sistema para clientes, gerentes e administradores. Possui campos de e-mail e senha, links para recuperação de senha e registro.
-- `GET /register` — Página de cadastro de novo usuário com criação de conta e validação de dados.
-- `GET /forgot-password` e `GET /reset-password/{token}` — Fluxo de recuperação de senha oferecido pelo Laravel Breeze.
-- `GET /profile` — Página de perfil do usuário autenticado onde é possível atualizar informações pessoais, alterar senha e excluir a conta.
-- `GET /agendamento` — Formulário de agendamento de horário com seleção de serviço, profissional e data/hora, mais resumo de valores e campos de contato.
-- `GET /client/dashboard` — Dashboard do cliente com exibição de informações personalizadas e acesso às funcionalidades de cliente.
-- `GET /manager/dashboard` — Dashboard do gerente com visão operacional, estatísticas e lista de agendamentos do dia.
-- `GET /admin/dashboard` — Dashboard do administrador para controle de sistema e administração geral.
+## Funções de usuário
 
-## Roles e Dashboards
+- `client` — acesso ao painel de cliente
+- `manager` — função usada para barbeiros; acesso à agenda do profissional
+- `admin` — acesso ao painel administrativo e às ações de gestão
 
-A aplicação define três roles principais:
+Novas contas são cadastradas como clientes. O cadastro de barbeiros pelo painel administrativo também cria um usuário com a função `manager` e seu perfil de barbeiro associado.
 
-- `client` — dashboard de cliente
-- `manager` — dashboard de gerente
-- `admin` — dashboard de administrador
+## Estrutura principal
 
-Usuários novos são criados como `client` por padrão. Para alterar a role de um usuário, atualize o registro diretamente no banco de dados.
+- `app/Http/Controllers/` — lógica de autenticação, perfil, dashboards e agendamentos
+- `app/Http/Middleware/CheckRole.php` — validação de função para rotas protegidas
+- `app/Http/Middleware/UpdateLastActivity.php` — atualização da atividade recente do usuário
+- `app/Models/` — modelos de usuário, barbeiro, agendamento e configurações
+- `resources/views/` — páginas Blade, dashboards e formulários
+- `routes/web.php` — rotas da aplicação
+- `routes/auth.php` — rotas de autenticação
+- `database/migrations/` — estrutura do banco de dados
+- `database/seeders/` — dados iniciais para desenvolvimento
 
-## Arquivos importantes
+## Observações
 
-- `app/Http/Middleware/CheckRole.php`
-- `app/Http/Middleware/CheckAdmin.php`
-- `resources/views/dashboards/client.blade.php`
-- `resources/views/dashboards/manager.blade.php`
-- `resources/views/dashboards/admin.blade.php`
+- O modo claro/escuro pode ser alternado nas telas que oferecem o controle de tema. A preferência não é persistida entre visitas.
+- Os preços dos serviços são definidos em `app/Http/Controllers/SchedulingController.php`.
+- O envio de e-mail para recuperação de senha depende da configuração de e-mail no arquivo `.env`.
+- O projeto inclui testes automatizados em `tests/`; execute-os com `php artisan test` quando desejar verificar a aplicação.
 
 ## Licença
 
