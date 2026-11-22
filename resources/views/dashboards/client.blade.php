@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>try { const savedTheme = localStorage.getItem('alameda-theme'); if (savedTheme === 'light' || savedTheme === 'dark') document.documentElement.classList.toggle('dark', savedTheme === 'dark'); } catch (error) {}</script>
 <title>Alameda Barbearia</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -58,7 +59,7 @@
   }
 </script>
 </head>
-<body class="bg-red-200 dark:bg-surface-dark text-ink dark:text-ink-dark font-sans leading-relaxed antialiased transition-colors duration-200">
+<body class="bg-surface dark:bg-surface-dark text-ink dark:text-ink-dark font-sans leading-relaxed antialiased transition-colors duration-200">
 
 <!-- ================= NAV ================= -->
 <header class="sticky top-0 z-50 border-b border-line dark:border-line-dark bg-surface/90 dark:bg-surface-dark/90 backdrop-blur">
@@ -365,7 +366,8 @@
 
 <script>
   document.getElementById('themeToggle').addEventListener('click', function(){
-    document.documentElement.classList.toggle('dark');
+    var isDark = document.documentElement.classList.toggle('dark');
+    localStorage.setItem('alameda-theme', isDark ? 'dark' : 'light');
   });
 
   // menu mobile

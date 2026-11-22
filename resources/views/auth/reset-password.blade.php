@@ -43,7 +43,7 @@
                         <button type="submit" class="w-full bg-[#c5a373] hover:bg-[#b38f5f] text-black font-bold py-3 rounded-md uppercase tracking-widest transition duration-300">
                             {{ __('Redefina a senha') }}
                         </button>
-                    </div>ssss
+                    </div>
                 </form>
             </div>
         </div>

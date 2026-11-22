@@ -28,7 +28,13 @@ class PasswordResetLinkController extends Controller
     {
         $request->validate([
             'email' => ['required', 'email'],
+            'theme' => ['nullable', 'in:light,dark'],
         ]);
+
+        $request->session()->put(
+            'password_reset_theme',
+            $request->input('theme') === 'light' ? 'light' : 'dark'
+        );
 
         // We will send the password reset link to this user. Once we have attempted
         // to send the link, we will examine the response then see the message we

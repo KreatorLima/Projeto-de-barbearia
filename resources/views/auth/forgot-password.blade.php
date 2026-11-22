@@ -20,6 +20,17 @@
 
                 <form method="POST" action="{{ route('password.email') }}">
                     @csrf
+                    <input type="hidden" name="theme" id="resetEmailTheme" value="dark">
+                    <script>
+                        (function () {
+                            try {
+                                document.getElementById('resetEmailTheme').value =
+                                    localStorage.getItem('alameda-theme') === 'light' ? 'light' : 'dark';
+                            } catch (error) {
+                                document.getElementById('resetEmailTheme').value = 'dark';
+                            }
+                        })();
+                    </script>
 
                     <div>
                         <x-input-label for="email" :value="__('Email')" class="text-[#c5a373] !font-semibold" />

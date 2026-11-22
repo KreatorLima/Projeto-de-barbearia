@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>try { const savedTheme = localStorage.getItem('alameda-theme'); if (savedTheme === 'light' || savedTheme === 'dark') document.documentElement.classList.toggle('dark', savedTheme === 'dark'); } catch (error) {}</script>
 <title>Painel do Administrador — Alameda Barbearia</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -437,7 +438,8 @@
 
 <script>
   document.getElementById('themeToggle').addEventListener('click', function(){
-    document.documentElement.classList.toggle('dark');
+    var isDark = document.documentElement.classList.toggle('dark');
+    localStorage.setItem('alameda-theme', isDark ? 'dark' : 'light');
   });
 
   var menuToggle = document.getElementById('menuToggle');
