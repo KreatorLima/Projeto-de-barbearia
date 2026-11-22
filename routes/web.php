@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SchedulingController;
+use App\Http\Controllers\Auth\GoogleAuthController;
 
 Route::get('/', function () {
     return view('index');
@@ -45,5 +46,13 @@ Route::get('/agendamento', [SchedulingController::class, 'index'])->name('schedu
 Route::post('/agendamento', [SchedulingController::class, 'store'])->name('agendamentos.store');
 Route::post('/agendamentos/{id}/status', [SchedulingController::class, 'updateStatus'])
     ->name('scheduling.updateStatus');
+
+
+// Rotas Google Auth
+Route::get('/auth/google', [GoogleAuthController::class, 'redirect'])
+    ->name('auth.google');
+
+Route::get('/auth/google/callback', [GoogleAuthController::class, 'callback'])
+    ->name('auth.google.callback');
 
 require __DIR__.'/auth.php';
