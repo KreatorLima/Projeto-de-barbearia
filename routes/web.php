@@ -38,6 +38,8 @@ Route::middleware(['auth', 'last.activity'])->group(function () {
         
         // Cadastrar Novo Barbeiro
         Route::post('/admin/barbeiros', [DashboardController::class, 'store'])->name('admin.barbers.store');
+        Route::put('/admin/barbeiros/{barber}', [DashboardController::class, 'updateBarber'])->name('admin.barbers.update');
+        Route::delete('/admin/barbeiros/{barber}', [DashboardController::class, 'destroyBarber'])->name('admin.barbers.destroy');
     });
 });
 

@@ -9,6 +9,7 @@ use App\Models\Setting;
 use App\Models\Barber;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash; 
+use Illuminate\Validation\Rule;
 
 class DashboardController extends Controller
 {
@@ -61,7 +62,7 @@ class DashboardController extends Controller
             ->whereIn('status', $statusConcluido)
             ->get();
         $agendamentosMensais = Scheduling::whereMonth('date', now()->month)->get();
-        $metaMensal = Setting::first()->monthly_goal ?? 100;
+        $metaMensal = Setting::query()->value('monthly_goal') ?? 100;
 
         $agendamentosSemana = Scheduling::whereBetween('date', [
             now()->startOfWeek(\Carbon\Carbon::MONDAY),
@@ -151,13 +152,9 @@ class DashboardController extends Controller
             'meta_mensal' => 'required|integer|min:1'
         ]);
 
-        $setting = Setting::first();
-
-        if ($setting) {
-            $setting->update([
-                'monthly_goal' => $request->meta_mensal
-            ]);
-        }
+        $setting = Setting::query()->first() ?? new Setting();
+        $setting->monthly_goal = $request->integer('meta_mensal');
+        $setting->save();
 
         return back()->with('success', 'Meta atualizada!');
     }
@@ -195,5 +192,52 @@ class DashboardController extends Controller
         });
 
         return redirect()->back()->with('success', 'Barbeiro cadastrado com sucesso!');
+    }
+
+    public function updateBarber(Request $request, Barber $barber)
+    {
+        $validated = $request->validate([
+            'nome' => 'required|string|max:255',
+            'email' => ['required', 'email', Rule::unique('users', 'email')->ignore($barber->user_id)],
+            'cargo' => 'nullable|string|max:255',
+            'whatsapp' => 'nullable|string|max:30',
+            'especialidades' => 'nullable|string',
+            'senha' => 'nullable|string|min:8|confirmed',
+        ]);
+
+        DB::transaction(function () use ($request, $barber, $validated) {
+            $user = $barber->user;
+            $oldName = $user->name;
+            $user->name = $validated['nome'];
+            $user->email = $validated['email'];
+
+            if (!empty($validated['senha'])) {
+                $user->password = Hash::make($validated['senha']);
+            }
+
+            $user->save();
+
+            if ($oldName !== $user->name) {
+                Scheduling::where('barber', $oldName)->update(['barber' => $user->name]);
+            }
+
+            $barber->update([
+                'cargo' => $validated['cargo'] ?? null,
+                'whatsapp' => $validated['whatsapp'] ?? null,
+                'especialidades' => $validated['especialidades'] ?? null,
+                'ativo' => $request->boolean('ativo'),
+            ]);
+        });
+
+        return redirect()->route('admin.dashboard')->with('success', 'Dados do barbeiro atualizados com sucesso.');
+    }
+
+    public function destroyBarber(Barber $barber)
+    {
+        DB::transaction(function () use ($barber) {
+            $barber->user->delete();
+        });
+
+        return redirect()->route('admin.dashboard')->with('success', 'Barbeiro removido da equipe.');
     }
 }

@@ -104,6 +104,12 @@
 
 <main class="max-w-[1120px] mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-10 sm:space-y-14">
 
+  @if (session('success'))
+    <div role="status" class="rounded-lg border border-brass-dim dark:border-brass-dim-dark bg-card dark:bg-card-dark px-4 py-3 text-sm text-brass dark:text-brass-dark">
+      {{ session('success') }}
+    </div>
+  @endif
+
   <!-- ================= PERFIL + VISÃO GERAL ================= -->
   <section data-reveal>
     <div class="flex flex-wrap items-center gap-5 mb-8">
@@ -284,13 +290,14 @@
     </div>
 
     <div class="border border-line dark:border-line-dark rounded-xl overflow-x-auto">
-      <table class="w-full min-w-[520px] text-sm">
+      <table class="w-full min-w-[640px] text-sm">
         <thead>
           <tr class="bg-surface-2 dark:bg-surface-2-dark text-left text-[11px] uppercase tracking-wide text-ink-dim dark:text-ink-dim-dark">
             <th class="px-4 py-3 font-medium">Barbeiro</th>
             <th class="px-4 py-3 font-medium hidden sm:table-cell">Cargo</th>
             <th class="px-4 py-3 font-medium hidden md:table-cell">Contato</th>
             <th class="px-4 py-3 font-medium">Status</th>
+            <th class="px-4 py-3 font-medium text-right">Ações</th>
           </tr>
         </thead>
         <tbody id="teamBody" class="divide-y divide-line dark:divide-line-dark">
@@ -306,9 +313,42 @@
                       <span class="inline-flex items-center gap-1 text-[11px] font-mono border border-line dark:border-line-dark text-ink-dim dark:text-ink-dim-dark rounded-full px-2.5 py-1"><i class="ti ti-circle-minus" style="font-size:12px"></i> Inativo</span>
                     @endif
                   </td>
+                  <td class="px-4 py-3">
+                    <div class="flex items-center justify-end gap-2">
+                      <button type="button"
+                        data-edit-barber
+                        data-update-url="{{ route('admin.barbers.update', $barbeiro) }}"
+                        data-name="{{ $barbeiro->user->name }}"
+                        data-email="{{ $barbeiro->user->email }}"
+                        data-cargo="{{ $barbeiro->cargo }}"
+                        data-whatsapp="{{ $barbeiro->whatsapp }}"
+                        data-especialidades="{{ $barbeiro->especialidades }}"
+                        data-ativo="{{ $barbeiro->ativo ? '1' : '0' }}"
+                        aria-label="Editar {{ $barbeiro->user->name }}" title="Editar barbeiro"
+                        class="inline-flex items-center justify-center w-9 h-9 rounded border border-line dark:border-line-dark text-ink-dim dark:text-ink-dim-dark hover:border-brass-dim hover:text-brass dark:hover:text-brass-dark transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                          <path d="M12 20h9" />
+                          <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L8 18l-4 1 1-4Z" />
+                        </svg>
+                      </button>
+                      <button type="button"
+                        data-delete-barber
+                        data-delete-url="{{ route('admin.barbers.destroy', $barbeiro) }}"
+                        data-name="{{ $barbeiro->user->name }}"
+                        aria-label="Excluir {{ $barbeiro->user->name }}" title="Excluir barbeiro"
+                        class="inline-flex items-center justify-center w-9 h-9 rounded border border-line dark:border-line-dark text-ink-dim dark:text-ink-dim-dark hover:border-brick hover:text-brick dark:hover:text-brick-dark transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                          <path d="M3 6h18" />
+                          <path d="M8 6V4h8v2" />
+                          <path d="m19 6-1 14H6L5 6" />
+                          <path d="M10 11v5M14 11v5" />
+                        </svg>
+                      </button>
+                    </div>
+                  </td>
               </tr>
           @empty
-              <tr><td colspan="4" class="px-4 py-6 text-center text-ink-dim dark:text-ink-dim-dark">Nenhum barbeiro cadastrado.</td></tr>
+              <tr><td colspan="5" class="px-4 py-6 text-center text-ink-dim dark:text-ink-dim-dark">Nenhum barbeiro cadastrado.</td></tr>
           @endforelse
         </tbody>
       </table>
@@ -367,10 +407,11 @@
     </button>
  
     <span class="font-mono text-xs tracking-[0.14em] uppercase text-brass dark:text-brass-dark flex items-center gap-1.5"><i class="ti ti-user-plus"></i> Equipe</span>
-    <h2 class="font-display uppercase text-xl mt-1 mb-5">Cadastrar novo barbeiro</h2>
+    <h2 id="barberModalTitle" class="font-display uppercase text-xl mt-1 mb-5">Cadastrar novo barbeiro</h2>
  
-    <form method="POST" action="{{ route('admin.barbers.store') }}">
+    <form id="barberForm" method="POST" action="{{ route('admin.barbers.store') }}" data-create-url="{{ route('admin.barbers.store') }}">
       @csrf
+      <input type="hidden" name="_method" id="barberFormMethod" value="PUT" disabled>
       <div class="grid sm:grid-cols-2 gap-4">
         <div>
           <label for="barberName" class="block text-[13px] text-ink-dim dark:text-ink-dim-dark mb-1.5">Nome completo</label>
@@ -389,16 +430,16 @@
         </div>
         <div>
           <label for="barberPhone" class="block text-[13px] text-ink-dim dark:text-ink-dim-dark mb-1.5">WhatsApp</label>
-          <input type="tel" name="whatsapp" id="barberPhone" required placeholder="(15) 99999-9999"
+          <input type="tel" name="whatsapp" id="barberPhone" placeholder="(15) 99999-9999"
             class="w-full bg-transparent border border-line dark:border-line-dark rounded-lg px-4 py-3 text-sm outline-none focus:border-brass dark:focus:border-brass-dark transition-colors">
         </div>
         <div>
-          <label for="barberPassword" class="block text-[13px] text-ink-dim dark:text-ink-dim-dark mb-1.5">Senha provisória</label>
+          <label for="barberPassword" id="barberPasswordLabel" class="block text-[13px] text-ink-dim dark:text-ink-dim-dark mb-1.5">Senha provisória</label>
           <input type="password" name="senha" id="barberPassword" required minlength="8" placeholder="Mínimo 8 caracteres"
             class="w-full bg-transparent border border-line dark:border-line-dark rounded-lg px-4 py-3 text-sm outline-none focus:border-brass dark:focus:border-brass-dark transition-colors">
         </div>
         <div>
-          <label for="barberPasswordConfirm" class="block text-[13px] text-ink-dim dark:text-ink-dim-dark mb-1.5">Confirmar senha</label>
+          <label for="barberPasswordConfirm" id="barberPasswordConfirmLabel" class="block text-[13px] text-ink-dim dark:text-ink-dim-dark mb-1.5">Confirmar senha</label>
           <input type="password" name="senha_confirmation" id="barberPasswordConfirm" required minlength="8"
             class="w-full bg-transparent border border-line dark:border-line-dark rounded-lg px-4 py-3 text-sm outline-none focus:border-brass dark:focus:border-brass-dark transition-colors">
         </div>
@@ -419,7 +460,7 @@
             class="font-mono text-[13px] tracking-wide px-5 py-3 rounded border border-line dark:border-line-dark text-ink-dim dark:text-ink-dim-dark hover:border-brass-dim hover:text-brass dark:hover:text-brass-dark transition-colors">
             Cancelar
           </button>
-          <button type="submit"
+          <button type="submit" id="barberSubmitButton"
             class="font-mono text-[13px] tracking-wide bg-brass dark:bg-brass-dark text-white dark:text-surface-dark px-6 py-3.5 rounded transition-all duration-150 hover:opacity-90 hover:-translate-y-0.5 active:translate-y-0">
             Cadastrar barbeiro
           </button>
@@ -427,6 +468,29 @@
       </div>
     </form>
   </div>
+</div>
+
+<div id="deleteBarberModalOverlay" class="hidden fixed inset-0 z-[70] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4" aria-hidden="true">
+  <section role="alertdialog" aria-modal="true" aria-labelledby="deleteBarberTitle" aria-describedby="deleteBarberDescription"
+    class="w-full max-w-md bg-card dark:bg-card-dark border border-line dark:border-line-dark rounded-xl p-6">
+    <span class="font-mono text-xs tracking-[0.14em] uppercase text-brick dark:text-brick-dark">Remover da equipe</span>
+    <h2 id="deleteBarberTitle" class="font-display uppercase text-xl mt-2">Excluir barbeiro?</h2>
+    <p id="deleteBarberDescription" class="mt-3 text-sm text-ink-dim dark:text-ink-dim-dark">
+      A conta de acesso e o perfil de <strong id="deleteBarberName" class="text-ink dark:text-ink-dark"></strong> serão removidos. Os agendamentos já registrados serão mantidos.
+    </p>
+    <form id="deleteBarberForm" method="POST" action="" class="flex items-center justify-end gap-3 mt-6">
+      @csrf
+      @method('DELETE')
+      <button type="button" id="cancelDeleteBarberBtn"
+        class="font-mono text-[13px] tracking-wide px-4 py-3 rounded border border-line dark:border-line-dark text-ink-dim dark:text-ink-dim-dark hover:border-brass-dim hover:text-brass dark:hover:text-brass-dark transition-colors">
+        Cancelar
+      </button>
+      <button type="submit"
+        class="font-mono text-[13px] tracking-wide px-4 py-3 rounded border border-brick/40 text-brick dark:text-brick-dark hover:bg-brick hover:text-white transition-colors">
+        Excluir barbeiro
+      </button>
+    </form>
+  </section>
 </div>
 
 <footer class="border-t border-line dark:border-line-dark py-6 mt-4">
@@ -488,23 +552,91 @@
   }, { threshold: 0.15 });
   revealEls.forEach(function(el, i){ el.style.transitionDelay = (i * 80) + 'ms'; io.observe(el); });
 
-    // ---------- modal: cadastrar barbeiro ----------
+    // ---------- modais da equipe ----------
   var barberModalOverlay = document.getElementById('barberModalOverlay');
+  var barberForm = document.getElementById('barberForm');
+  var barberFormMethod = document.getElementById('barberFormMethod');
+  var barberModalTitle = document.getElementById('barberModalTitle');
+  var barberSubmitButton = document.getElementById('barberSubmitButton');
+  var barberPassword = document.getElementById('barberPassword');
+  var barberPasswordConfirm = document.getElementById('barberPasswordConfirm');
+  var barberPasswordLabel = document.getElementById('barberPasswordLabel');
+  var barberPasswordConfirmLabel = document.getElementById('barberPasswordConfirmLabel');
+
   function openBarberModal(){
+    barberForm.reset();
+    barberForm.action = barberForm.dataset.createUrl;
+    barberFormMethod.disabled = true;
+    barberModalTitle.textContent = 'Cadastrar novo barbeiro';
+    barberSubmitButton.textContent = 'Cadastrar barbeiro';
+    barberPassword.required = true;
+    barberPasswordConfirm.required = true;
+    barberPasswordLabel.textContent = 'Senha provisória';
+    barberPasswordConfirmLabel.textContent = 'Confirmar senha';
+    barberPassword.placeholder = 'Mínimo 8 caracteres';
     barberModalOverlay.classList.remove('hidden');
     document.getElementById('barberName').focus();
   }
+
+  function openBarberEditModal(button){
+    barberForm.reset();
+    barberForm.action = button.dataset.updateUrl;
+    barberFormMethod.disabled = false;
+    barberModalTitle.textContent = 'Editar barbeiro';
+    barberSubmitButton.textContent = 'Salvar alterações';
+    document.getElementById('barberName').value = button.dataset.name;
+    document.getElementById('barberEmail').value = button.dataset.email;
+    document.getElementById('barberRole').value = button.dataset.cargo;
+    document.getElementById('barberPhone').value = button.dataset.whatsapp;
+    document.getElementById('barberSpecialties').value = button.dataset.especialidades;
+    document.getElementById('barberActive').checked = button.dataset.ativo === '1';
+    barberPassword.required = false;
+    barberPasswordConfirm.required = false;
+    barberPasswordLabel.textContent = 'Nova senha (opcional)';
+    barberPasswordConfirmLabel.textContent = 'Confirme a nova senha';
+    barberPassword.placeholder = 'Deixe em branco para manter a senha atual';
+    barberModalOverlay.classList.remove('hidden');
+    document.getElementById('barberName').focus();
+  }
+
   function closeBarberModal(){
     barberModalOverlay.classList.add('hidden');
   }
+
   document.getElementById('openBarberModalBtn').addEventListener('click', openBarberModal);
   document.getElementById('closeBarberModalBtn').addEventListener('click', closeBarberModal);
   document.getElementById('cancelBarberModalBtn').addEventListener('click', closeBarberModal);
+  document.querySelectorAll('[data-edit-barber]').forEach(function(button){
+    button.addEventListener('click', function(){ openBarberEditModal(button); });
+  });
   barberModalOverlay.addEventListener('click', function(e){
     if (e.target === barberModalOverlay) closeBarberModal();
   });
   document.addEventListener('keydown', function(e){
     if (e.key === 'Escape' && !barberModalOverlay.classList.contains('hidden')) closeBarberModal();
+  });
+
+  var deleteBarberModalOverlay = document.getElementById('deleteBarberModalOverlay');
+  var deleteBarberForm = document.getElementById('deleteBarberForm');
+  function closeDeleteBarberModal(){
+    deleteBarberModalOverlay.classList.add('hidden');
+    deleteBarberModalOverlay.setAttribute('aria-hidden', 'true');
+  }
+  document.querySelectorAll('[data-delete-barber]').forEach(function(button){
+    button.addEventListener('click', function(){
+      deleteBarberForm.action = button.dataset.deleteUrl;
+      document.getElementById('deleteBarberName').textContent = button.dataset.name;
+      deleteBarberModalOverlay.classList.remove('hidden');
+      deleteBarberModalOverlay.setAttribute('aria-hidden', 'false');
+      document.getElementById('cancelDeleteBarberBtn').focus();
+    });
+  });
+  document.getElementById('cancelDeleteBarberBtn').addEventListener('click', closeDeleteBarberModal);
+  deleteBarberModalOverlay.addEventListener('click', function(e){
+    if (e.target === deleteBarberModalOverlay) closeDeleteBarberModal();
+  });
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape' && !deleteBarberModalOverlay.classList.contains('hidden')) closeDeleteBarberModal();
   });
  
   var revealEls = document.querySelectorAll('[data-reveal]');
@@ -578,74 +710,6 @@
       '</tr>';
     }).join('');
   }
-
-  // ---------- equipe ----------
-  function statusBadge(status){
-    if (status === 'ativo'){
-      return '<span class="inline-flex items-center gap-1 text-[11px] font-mono border border-brass-dim dark:border-brass-dim-dark text-brass dark:text-brass-dark rounded-full px-2.5 py-1"><i class="ti ti-circle-check" style="font-size:12px"></i> Ativo</span>';
-    }
-    return '<span class="inline-flex items-center gap-1 text-[11px] font-mono border border-line dark:border-line-dark text-ink-dim dark:text-ink-dim-dark rounded-full px-2.5 py-1"><i class="ti ti-circle-minus" style="font-size:12px"></i> Inativo</span>';
-  }
-
-  function renderTeam(){
-    document.getElementById('teamCount').textContent = BARBERS.length + (BARBERS.length === 1 ? ' barbeiro' : ' barbeiros');
-    document.getElementById('totalCount').textContent = BARBERS.length;
-    document.getElementById('activeCount').firstChild.textContent = BARBERS.filter(function(b){ return b.status === 'ativo'; }).length + ' ';
-
-    document.getElementById('teamBody').innerHTML = BARBERS.map(function(b, i){
-      return '<tr class="hover:bg-surface-2 dark:hover:bg-surface-2-dark">' +
-        '<td class="px-4 py-3 font-medium flex items-center gap-3">' +
-          '<span class="w-8 h-8 rounded-full bg-surface-2 dark:bg-surface-2-dark flex items-center justify-center font-display text-xs text-brass-dim dark:text-brass-dim-dark shrink-0">' + initials(b.name) + '</span>' +
-          b.name +
-        '</td>' +
-        '<td class="px-4 py-3 text-ink-dim dark:text-ink-dim-dark hidden sm:table-cell">' + (b.role || 'Barbeiro') + '</td>' +
-        '<td class="px-4 py-3 text-ink-dim dark:text-ink-dim-dark hidden md:table-cell font-mono text-[13px]">' + b.phone + '</td>' +
-        '<td class="px-4 py-3">' + statusBadge(b.status) + '</td>' +
-        '<td class="px-4 py-3">' +
-          '<div class="flex items-center justify-end gap-2">' +
-            '<button type="button" title="Editar (visual apenas)" class="inline-flex items-center justify-center w-8 h-8 rounded border border-line dark:border-line-dark text-ink-dim dark:text-ink-dim-dark hover:border-brass-dim hover:text-brass dark:hover:text-brass-dark transition-colors">' +
-              '<i class="ti ti-pencil" style="font-size:14px"></i></button>' +
-            '<button type="button" data-toggle="' + i + '" title="' + (b.status === 'ativo' ? 'Desativar' : 'Ativar') + '" class="inline-flex items-center justify-center w-8 h-8 rounded border border-line dark:border-line-dark text-ink-dim dark:text-ink-dim-dark hover:border-brass-dim hover:text-brass dark:hover:text-brass-dark transition-colors">' +
-              '<i class="ti ' + (b.status === 'ativo' ? 'ti-toggle-right' : 'ti-toggle-left') + '" style="font-size:14px"></i></button>' +
-            '<button type="button" data-remove="' + i + '" title="Remover" class="inline-flex items-center justify-center w-8 h-8 rounded border border-line dark:border-line-dark text-ink-dim dark:text-ink-dim-dark hover:border-brick hover:text-brick dark:hover:text-brick-dark transition-colors">' +
-              '<i class="ti ti-trash" style="font-size:14px"></i></button>' +
-          '</div>' +
-        '</td>' +
-      '</tr>';
-    }).join('');
-
-    document.querySelectorAll('[data-toggle]').forEach(function(btn){
-      btn.addEventListener('click', function(){
-        var i = Number(btn.dataset.toggle);
-        BARBERS[i].status = BARBERS[i].status === 'ativo' ? 'inativo' : 'ativo';
-        renderTeam();
-      });
-    });
-    document.querySelectorAll('[data-remove]').forEach(function(btn){
-      btn.addEventListener('click', function(){
-        var i = Number(btn.dataset.remove);
-        if (confirm('Remover ' + BARBERS[i].name + ' da equipe? (apenas visual, nada é salvo)')){
-          BARBERS.splice(i, 1);
-          renderTeam();
-          renderRanking();
-        }
-      });
-    });
-  }
-
-  // Valida a confirmação de senha antes de enviar o formulário ao servidor.
-  document.getElementById('barberForm').addEventListener('submit', function(e){
-    var pass = document.getElementById('barberPassword').value;
-    var confirm = document.getElementById('barberPasswordConfirm').value;
-    var errorEl = document.getElementById('formError');
-
-    if (pass !== confirm){
-      e.preventDefault();
-      errorEl.classList.remove('hidden');
-      return;
-    }
-    errorEl.classList.add('hidden');
-  });
 
   renderWeekTable();
 </script>
